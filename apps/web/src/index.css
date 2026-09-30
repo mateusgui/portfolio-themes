@@ -28,10 +28,26 @@
   --shadow-theme: var(--theme-shadow);
 }
 
+/* Medidas do layout global, iguais em todos os temas. */
+:root {
+  --navbar-height: 3.5rem;
+  --sidebar-width: 16rem;
+}
+
 @layer base {
   html {
     background-color: var(--theme-bg);
     color: var(--theme-fg);
     font-family: var(--theme-font-body);
+  }
+
+  /* Com o drawer aberto, a página por trás não rola. */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--theme-accent);
+    outline-offset: 2px;
   }
 }
