@@ -40,10 +40,30 @@ describe('Navbar', () => {
     );
   });
 
-  it('mostra o seletor de idioma', () => {
+  it('o seletor de idioma lista cada idioma no próprio nome', () => {
     renderNavbar();
 
-    expect(screen.getByRole('button', { name: 'Idioma: Português' })).toBeInTheDocument();
+    const select = screen.getByRole('combobox', { name: 'Idioma' });
+    const options = within(select).getAllByRole('option');
+
+    expect(select).toHaveValue('pt-BR');
+    expect(options.map((option) => [option.textContent, option.getAttribute('lang')])).toEqual([
+      ['Português', 'pt-BR'],
+      ['English', 'en'],
+      ['Español', 'es'],
+    ]);
+  });
+
+  it('trocar o idioma traduz a interface e salva a escolha', async () => {
+    renderNavbar();
+
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Idioma' }), 'es');
+
+    expect(screen.getByRole('combobox', { name: 'Idioma' })).toHaveValue('es');
+    expect(screen.getByRole('button', { name: 'Abrir menú' })).toBeInTheDocument();
+    expect(localStorage.getItem('portfolio:lang')).toBe('es');
+    expect(document.documentElement.lang).toBe('es');
+    expect(document.title).toBe('Mateus Guimarães | Desarrollador Full Stack');
   });
 
   it('botão de menu controla o drawer e reflete o estado', async () => {

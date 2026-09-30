@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useActiveSection } from '../hooks/useActiveSection.ts';
 import { MobileDrawer } from '../layout/MobileDrawer.tsx';
@@ -6,7 +7,6 @@ import { Navbar } from '../layout/Navbar.tsx';
 import { Sidebar } from '../layout/Sidebar.tsx';
 import { Section } from '../sections/Section.tsx';
 import { SECTIONS, type SectionId } from '../sections/sections.ts';
-import { strings } from './strings.ts';
 
 const MENU_ID = 'menu-mobile';
 // Mesmo breakpoint `lg` em que a sidebar fixa aparece.
@@ -27,6 +27,7 @@ const PLACEHOLDER_HEIGHT: Record<SectionId, string> = {
 };
 
 export function AppShell() {
+  const { t } = useTranslation();
   const { activeId, navigateTo } = useActiveSection(SECTION_IDS);
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => {
@@ -51,7 +52,7 @@ export function AppShell() {
         href="#conteudo"
         className="sr-only z-50 bg-accent px-4 py-2 text-accent-fg focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
       >
-        {strings.skipLink}
+        {t('skipLink')}
       </a>
 
       <Navbar
@@ -79,7 +80,7 @@ export function AppShell() {
           <Section
             key={id}
             id={id}
-            title={strings.sections[id]}
+            title={t(`sections.${id}`)}
             className={PLACEHOLDER_HEIGHT[id]}
           />
         ))}

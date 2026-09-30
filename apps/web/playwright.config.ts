@@ -10,6 +10,8 @@ export default defineConfig({
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: `http://localhost:${PORT}`,
+    // Os textos esperados nos testes estão em pt-BR; os testes de idioma sobrescrevem.
+    locale: 'pt-BR',
     trace: 'on-first-retry',
   },
   projects: [

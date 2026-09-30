@@ -1,7 +1,7 @@
 import { FileTextIcon } from 'lucide-react';
 import { useEffect, useRef, type ComponentType, type MouseEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { strings } from '../app/strings.ts';
 import { scrollOffsetToReveal } from '../hooks/scrollSpy.ts';
 import { SECTIONS, type SectionId } from '../sections/sections.ts';
 import { GitHubIcon, LinkedInIcon } from './BrandIcons.tsx';
@@ -9,14 +9,14 @@ import { profile } from './profile.ts';
 
 interface ExternalLink {
   href: string;
-  label: string;
+  labelKey: 'sidebar.linkedin' | 'sidebar.github' | 'sidebar.resume';
   icon: ComponentType<{ className?: string }>;
 }
 
 const EXTERNAL_LINKS: ExternalLink[] = [
-  { href: profile.links.linkedin, label: strings.sidebar.linkedin, icon: LinkedInIcon },
-  { href: profile.links.github, label: strings.sidebar.github, icon: GitHubIcon },
-  { href: profile.links.resume, label: strings.sidebar.resume, icon: FileTextIcon },
+  { href: profile.links.linkedin, labelKey: 'sidebar.linkedin', icon: LinkedInIcon },
+  { href: profile.links.github, labelKey: 'sidebar.github', icon: GitHubIcon },
+  { href: profile.links.resume, labelKey: 'sidebar.resume', icon: FileTextIcon },
 ];
 
 export interface SidebarContentProps {
@@ -32,6 +32,7 @@ function isModifiedClick(event: MouseEvent) {
 
 /** Conteúdo da sidebar, compartilhado pela sidebar fixa (desktop) e pelo drawer (mobile). */
 export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
+  const { t } = useTranslation();
   const activeLinkRef = useRef<HTMLAnchorElement>(null);
 
   // Se o item ativo sair da área visível da sidebar, ela rola até ele. O contêiner
@@ -60,11 +61,11 @@ export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
         </span>
         <div>
           <p className="font-heading leading-tight">{profile.name}</p>
-          <p className="text-sm text-muted">{profile.role}</p>
+          <p className="text-sm text-muted">{t('profile.role')}</p>
         </div>
       </div>
 
-      <nav aria-label={strings.sidebar.sectionsNav}>
+      <nav aria-label={t('sidebar.sectionsNav')}>
         <ul className="flex flex-col gap-1">
           {SECTIONS.map(({ id, icon: Icon }) => {
             const active = id === activeId;
@@ -84,7 +85,7 @@ export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
                   }`}
                 >
                   <Icon aria-hidden="true" className="size-5 shrink-0" />
-                  {strings.sections[id]}
+                  {t(`sections.${id}`)}
                 </a>
               </li>
             );
@@ -92,19 +93,19 @@ export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
         </ul>
       </nav>
 
-      <nav aria-label={strings.sidebar.externalLinks} className="mt-auto">
+      <nav aria-label={t('sidebar.externalLinks')} className="mt-auto">
         <ul className="flex flex-col gap-1">
-          {EXTERNAL_LINKS.map(({ href, label, icon: Icon }) => (
-            <li key={label}>
+          {EXTERNAL_LINKS.map(({ href, labelKey, icon: Icon }) => (
+            <li key={labelKey}>
               <a
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`${label} ${strings.newTab}`}
+                aria-label={`${t(labelKey)} ${t('newTab')}`}
                 className="flex items-center gap-3 rounded-theme px-3 py-2 text-sm text-muted hover:bg-surface-alt hover:text-fg"
               >
                 <Icon className="size-4 shrink-0" />
-                {label}
+                {t(labelKey)}
               </a>
             </li>
           ))}

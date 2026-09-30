@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "title": "Mateus Guimarães | Full Stack Developer",
+    "description": "Portfolio of Mateus Guimarães, full stack developer: projects, experience, education and contact."
+  },
+  "skipLink": "Skip to content",
+  "newTab": "(opens in a new tab)",
+  "navbar": {
+    "openMenu": "Open menu",
+    "themes": "Themes",
+    "language": "Language"
+  },
+  "drawer": {
+    "label": "Menu",
+    "close": "Close menu"
+  },
+  "profile": {
+    "role": "Full Stack Developer"
+  },
+  "sidebar": {
+    "sectionsNav": "Sections",
+    "externalLinks": "External links",
+    "linkedin": "LinkedIn",
+    "github": "GitHub",
+    "resume": "Resume"
+  },
+  "themes": {
+    "hacker": "Hacker",
+    "retro": "Retro",
+    "minimal": "Minimal",
+    "vscode": "VS Code",
+    "paper": "Paper"
+  },
+  "sections": {
+    "inicio": "Home",
+    "sobre": "About",
+    "skills": "Skills",
+    "projetos": "Projects",
+    "experiencia": "Experience",
+    "formacao": "Education",
+    "contato": "Contact"
+  },
+  "dates": {
+    "present": "present"
+  }
+}

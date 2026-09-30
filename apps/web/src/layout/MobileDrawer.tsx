@@ -1,7 +1,7 @@
 import { XIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { strings } from '../app/strings.ts';
 import type { SectionId } from '../sections/sections.ts';
 import { SidebarContent } from './Sidebar.tsx';
 
@@ -21,6 +21,7 @@ const FOCUSABLE = 'a[href], button:not([disabled])';
  * deixa o Tab escapar para a interface do navegador, então o ciclo é feito aqui.
  */
 export function MobileDrawer({ id, open, onClose, activeId, onNavigate }: MobileDrawerProps) {
+  const { t } = useTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -85,14 +86,14 @@ export function MobileDrawer({ id, open, onClose, activeId, onNavigate }: Mobile
     <dialog
       ref={dialogRef}
       id={id}
-      aria-label={strings.drawer.label}
+      aria-label={t('drawer.label')}
       className="fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-72 max-w-[85vw] bg-surface p-0 text-fg backdrop:bg-fg/50 motion-safe:transition-transform motion-safe:duration-200 lg:hidden starting:open:-translate-x-full"
     >
       <div data-sidebar-scroll className="relative h-full overflow-y-auto">
         <button
           type="button"
           onClick={close}
-          aria-label={strings.drawer.close}
+          aria-label={t('drawer.close')}
           className="absolute top-3 right-3 rounded-theme p-2 hover:bg-surface-alt"
         >
           <XIcon aria-hidden="true" className="size-5" />
