@@ -1,0 +1,25 @@
+/*
+ * Contrato de tokens de tema.
+ *
+ * Todo tema define estas variáveis em `[data-theme='<id>']` (um arquivo por tema
+ * nesta pasta). O Tailwind lê as variáveis via `@theme inline` em `src/index.css`,
+ * então os componentes usam só classes semânticas (`bg-surface`, `text-fg`...).
+ *
+ * Os valores abaixo são neutros e provisórios, só para a página renderizar
+ * até o primeiro tema real existir.
+ */
+:root {
+  --theme-bg: Canvas;
+  --theme-surface: Canvas;
+  --theme-surface-alt: Canvas;
+  --theme-fg: CanvasText;
+  --theme-muted: GrayText;
+  --theme-accent: LinkText;
+  --theme-accent-fg: Canvas;
+  --theme-border: GrayText;
+  --theme-radius: 0;
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-heading: system-ui, sans-serif;
+  --theme-font-mono: ui-monospace, monospace;
+  --theme-shadow: none;
+}

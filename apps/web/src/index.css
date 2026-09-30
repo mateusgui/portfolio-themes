@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+@import './themes/tokens/tokens.css';
+
+/*
+ * Remove as cores e fontes padrão do Tailwind: os componentes só podem usar
+ * os tokens semânticos abaixo, que mudam com `data-theme`.
+ */
+@theme {
+  --color-*: initial;
+  --font-*: initial;
+}
+
+@theme inline {
+  --color-bg: var(--theme-bg);
+  --color-surface: var(--theme-surface);
+  --color-surface-alt: var(--theme-surface-alt);
+  --color-fg: var(--theme-fg);
+  --color-muted: var(--theme-muted);
+  --color-accent: var(--theme-accent);
+  --color-accent-fg: var(--theme-accent-fg);
+  --color-border: var(--theme-border);
+
+  --font-body: var(--theme-font-body);
+  --font-heading: var(--theme-font-heading);
+  --font-mono: var(--theme-font-mono);
+
+  --radius-theme: var(--theme-radius);
+  --shadow-theme: var(--theme-shadow);
+}
+
+@layer base {
+  html {
+    background-color: var(--theme-bg);
+    color: var(--theme-fg);
+    font-family: var(--theme-font-body);
+  }
+}

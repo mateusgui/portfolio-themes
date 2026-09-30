@@ -12,15 +12,26 @@ React, Vite, TypeScript (strict), Tailwind CSS com CSS variables, Framer Motion,
 
 ## Como rodar
 
-> Projeto em construção: o setup ainda está sendo montado.
+> Projeto em construção.
 
-Pré-requisito: Node.js LTS.
+Pré-requisito: Node.js 22.12+ ou 24 (versão do CI em `.nvmrc`). O app fica em `apps/web` (npm workspaces).
 
 ```bash
 npm install
-npm run dev     # servidor de desenvolvimento
-npm run check   # lint, tipos e testes
+npm run dev        # servidor de desenvolvimento
+npm run check      # formatação, lint, tipos e testes
+npx -w web playwright install chromium   # só na primeira vez
+npm run test:e2e   # testes e2e (Playwright)
 ```
+
+Com Docker (opcional):
+
+```bash
+docker build -f apps/web/Dockerfile -t portfolio-web .
+docker run --rm -p 8080:80 portfolio-web   # http://localhost:8080
+```
+
+Variáveis de ambiente: copie `apps/web/.env.example` para `apps/web/.env`. Toda variável `VITE_*` é pública.
 
 ## Licença
 
