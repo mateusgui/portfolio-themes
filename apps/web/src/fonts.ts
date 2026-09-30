@@ -2,3 +2,4 @@
 import '@fontsource-variable/caveat';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/source-serif-4';

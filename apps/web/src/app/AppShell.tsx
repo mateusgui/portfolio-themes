@@ -1,12 +1,20 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useActiveSection } from '../hooks/useActiveSection.ts';
 import { MobileDrawer } from '../layout/MobileDrawer.tsx';
 import { Navbar } from '../layout/Navbar.tsx';
 import { Sidebar } from '../layout/Sidebar.tsx';
-import { Section } from '../sections/Section.tsx';
+import { About } from '../sections/About.tsx';
+import { Contact } from '../sections/Contact.tsx';
+import { Education } from '../sections/Education.tsx';
+import { Experience } from '../sections/Experience.tsx';
+import { Hero } from '../sections/Hero.tsx';
+import { Projects } from '../sections/Projects.tsx';
+import type { SectionBodyProps } from '../sections/sectionBody.ts';
+import { Skills } from '../sections/Skills.tsx';
 import { SECTIONS, type SectionId } from '../sections/sections.ts';
+import { useThemeSlots } from '../themes/useTheme.ts';
 
 const MENU_ID = 'menu-mobile';
 // Mesmo breakpoint `lg` em que a sidebar fixa aparece.
@@ -14,21 +22,21 @@ const DESKTOP_QUERY = '(min-width: 64rem)';
 
 const SECTION_IDS = SECTIONS.map(({ id }) => id) as [SectionId, ...SectionId[]];
 
-// Provisório até o conteúdo real: alturas variadas (e Contato curta no fim) para
-// exercitar o scroll spy.
-const PLACEHOLDER_HEIGHT: Record<SectionId, string> = {
-  inicio: 'min-h-[70vh]',
-  sobre: 'min-h-[40vh]',
-  skills: 'min-h-[120vh]',
-  projetos: 'min-h-[90vh]',
-  experiencia: 'min-h-[60vh]',
-  formacao: 'min-h-[50vh]',
-  contato: '',
+// Corpo de cada seção, na ordem da sidebar.
+const SECTION_COMPONENTS: Record<SectionId, ComponentType<SectionBodyProps>> = {
+  inicio: Hero,
+  sobre: About,
+  skills: Skills,
+  projetos: Projects,
+  experiencia: Experience,
+  formacao: Education,
+  contato: Contact,
 };
 
 export function AppShell() {
   const { t } = useTranslation();
   const { activeId, navigateTo } = useActiveSection(SECTION_IDS);
+  const { Decoration } = useThemeSlots();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
@@ -55,6 +63,8 @@ export function AppShell() {
         {t('skipLink')}
       </a>
 
+      {Decoration && <Decoration />}
+
       <Navbar
         menuId={MENU_ID}
         menuOpen={menuOpen}
@@ -76,14 +86,10 @@ export function AppShell() {
         tabIndex={-1}
         className="pt-(--navbar-height) outline-none lg:pl-(--sidebar-width)"
       >
-        {SECTIONS.map(({ id }) => (
-          <Section
-            key={id}
-            id={id}
-            title={t(`sections.${id}`)}
-            className={PLACEHOLDER_HEIGHT[id]}
-          />
-        ))}
+        {SECTIONS.map(({ id }) => {
+          const SectionBody = SECTION_COMPONENTS[id];
+          return <SectionBody key={id} onNavigate={navigateTo} />;
+        })}
       </main>
     </>
   );

@@ -8,6 +8,56 @@
       name="description"
       content="Portfólio de Mateus Guimarães, desenvolvedor full stack: projetos, experiência, formação e contato."
     />
+    <!--
+      Roda antes da pintura para não piscar outro tema. Tema: ?tema= > escolha
+      salva > prefers-color-scheme (escuro abre VS Code). ?tema= e ?lang= válidos
+      contam como escolha manual: são salvos e saem da URL. As chaves e os ids
+      precisam bater com src/themes/registry.ts e src/i18n/languages.ts.
+    -->
+    <script>
+      (function () {
+        var THEMES = ['hacker', 'retro', 'minimal', 'vscode', 'paper'];
+        var LANGUAGES = ['pt-BR', 'en', 'es'];
+        var storage = null;
+        try {
+          storage = window.localStorage;
+        } catch (error) {
+          // localStorage bloqueado: segue sem persistir.
+        }
+        function read(key) {
+          try {
+            return storage ? storage.getItem(key) : null;
+          } catch (error) {
+            return null;
+          }
+        }
+        function save(key, value) {
+          try {
+            if (storage) storage.setItem(key, value);
+          } catch (error) {
+            // Sem armazenamento, vale só para esta visita.
+          }
+        }
+
+        var url = new URL(window.location.href);
+        var queryTheme = url.searchParams.get('tema');
+        var queryLang = url.searchParams.get('lang');
+        if (THEMES.indexOf(queryTheme) !== -1) save('portfolio:theme', queryTheme);
+        if (LANGUAGES.indexOf(queryLang) !== -1) save('portfolio:lang', queryLang);
+        if (url.searchParams.has('tema') || url.searchParams.has('lang')) {
+          url.searchParams.delete('tema');
+          url.searchParams.delete('lang');
+          history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+        }
+
+        var theme = THEMES.indexOf(queryTheme) !== -1 ? queryTheme : read('portfolio:theme');
+        if (THEMES.indexOf(theme) === -1) {
+          var dark = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+          theme = dark ? 'vscode' : 'minimal';
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -28,6 +28,17 @@
   --shadow-theme: var(--theme-shadow);
 }
 
+/* Cursor de terminal: pisca em degraus (liga/desliga), sem fade. */
+@theme {
+  --animate-blink: blink 1s step-end infinite;
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+}
+
 /* Medidas do layout global, iguais em todos os temas. */
 :root {
   --navbar-height: 3.5rem;
@@ -44,6 +55,16 @@
   /* Com o drawer aberto, a página por trás não rola. */
   html:has(dialog[open]) {
     overflow: hidden;
+  }
+
+  /* Transições sutis de cor; somem com movimento reduzido. */
+  @media (prefers-reduced-motion: no-preference) {
+    a,
+    button,
+    select {
+      transition-property: color, background-color, border-color;
+      transition-duration: 150ms;
+    }
   }
 
   :focus-visible {

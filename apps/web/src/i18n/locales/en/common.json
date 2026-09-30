@@ -40,6 +40,24 @@
     "formacao": "Education",
     "contato": "Contact"
   },
+  "hero": {
+    "available": "Available for new opportunities",
+    "cta": "Get in touch"
+  },
+  "projects": {
+    "private": "Private",
+    "stack": "Technologies",
+    "code": "View code",
+    "screenshotsSoon": "Screenshots coming soon"
+  },
+  "contact": {
+    "email": "Email",
+    "linkedin": "LinkedIn",
+    "github": "GitHub"
+  },
+  "hacker": {
+    "rain": "Character rain"
+  },
   "dates": {
     "present": "present"
   }

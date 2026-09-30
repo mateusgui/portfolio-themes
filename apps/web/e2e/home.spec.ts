@@ -6,7 +6,8 @@ test.beforeEach(async ({ page }) => {
 
 test('a página abre com as 7 seções', async ({ page }) => {
   await expect(page).toHaveTitle(/Mateus Guimarães/);
-  await expect(page.getByRole('main').getByRole('heading', { level: 2 })).toHaveCount(7);
+  await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toHaveCount(1);
+  await expect(page.getByRole('main').getByRole('heading', { level: 2 })).toHaveCount(6);
 });
 
 test('o skip link é o primeiro foco e leva ao conteúdo', async ({ page }) => {

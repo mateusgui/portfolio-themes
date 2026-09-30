@@ -1,25 +1,22 @@
 /*
  * Contrato de tokens de tema.
  *
- * Todo tema define estas variáveis em `[data-theme='<id>']` (um arquivo por tema
- * nesta pasta). O Tailwind lê as variáveis via `@theme inline` em `src/index.css`,
+ * Todo tema define estas variáveis em `[data-theme='<id>']`, num arquivo por tema
+ * nesta pasta. O Tailwind lê as variáveis via `@theme inline` em `src/index.css`,
  * então os componentes usam só classes semânticas (`bg-surface`, `text-fg`...).
  *
- * Os valores abaixo são neutros e provisórios, só para a página renderizar
- * até o primeiro tema real existir.
+ *   --theme-bg           fundo da página
+ *   --theme-surface      navbar, sidebar, painéis
+ *   --theme-surface-alt  hover e item ativo
+ *   --theme-fg           texto principal
+ *   --theme-muted        texto secundário (contraste AA sobre surface e surface-alt)
+ *   --theme-accent       destaque (texto ou fundo)
+ *   --theme-accent-fg    texto sobre accent
+ *   --theme-border       bordas
+ *   --theme-radius       raio dos cantos
+ *   --theme-font-body / --theme-font-heading / --theme-font-mono
+ *   --theme-shadow       sombra de painéis
  */
-:root {
-  --theme-bg: Canvas;
-  --theme-surface: Canvas;
-  --theme-surface-alt: Canvas;
-  --theme-fg: CanvasText;
-  --theme-muted: GrayText;
-  --theme-accent: LinkText;
-  --theme-accent-fg: Canvas;
-  --theme-border: GrayText;
-  --theme-radius: 0;
-  --theme-font-body: system-ui, sans-serif;
-  --theme-font-heading: system-ui, sans-serif;
-  --theme-font-mono: ui-monospace, monospace;
-  --theme-shadow: none;
-}
+@import './minimal.css';
+@import './hacker.css';
+@import './paper.css';

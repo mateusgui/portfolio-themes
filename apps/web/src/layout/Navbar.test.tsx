@@ -1,12 +1,15 @@
-import { render, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+import { renderWithProviders } from '../tests/render.tsx';
 import { Navbar } from './Navbar.tsx';
 
 function renderNavbar(props: Partial<Parameters<typeof Navbar>[0]> = {}) {
   const onOpenMenu = vi.fn();
-  render(<Navbar menuId="menu-mobile" menuOpen={false} onOpenMenu={onOpenMenu} {...props} />);
+  renderWithProviders(
+    <Navbar menuId="menu-mobile" menuOpen={false} onOpenMenu={onOpenMenu} {...props} />,
+  );
   return { onOpenMenu };
 }
 

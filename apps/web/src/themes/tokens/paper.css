@@ -1,0 +1,86 @@
+/*
+ * Papel: caderno feito à mão. Fundo bege com textura leve, tinta escura, azul de
+ * caneta como acento e amarelo de marca-texto. Títulos em Caveat, corpo serifado.
+ */
+[data-theme='paper'] {
+  color-scheme: light;
+
+  --theme-bg: #f3ead3;
+  --theme-surface: #fbf6e8;
+  --theme-surface-alt: #fff1a1;
+  --theme-fg: #2b2621;
+  --theme-muted: #5c5145;
+  --theme-accent: #1f3b8f;
+  --theme-accent-fg: #fdf8ec;
+  --theme-border: #b9a88a;
+  /* Cantos desiguais, como traço de caneta. */
+  --theme-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  --theme-font-body: 'Source Serif 4 Variable', Georgia, serif;
+  --theme-font-heading: 'Caveat Variable', 'Segoe Print', cursive;
+  --theme-font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --theme-shadow: 2px 3px 0 rgb(43 38 33 / 0.12);
+}
+
+/* Textura de papel: ruído SVG de poucos bytes, sem imagem. */
+html[data-theme='paper'] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.36 0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Corpo confortável para leitura e títulos manuscritos maiores (Caveat é miúda). */
+[data-theme='paper'] body {
+  font-size: 1.0625rem;
+}
+
+[data-theme='paper'] h1 {
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  line-height: 1.05;
+}
+
+[data-theme='paper'] h2 {
+  font-size: 2.75rem;
+  line-height: 1.1;
+}
+
+[data-theme='paper'] h3 {
+  font-family: var(--theme-font-heading);
+  font-size: 1.75rem;
+  line-height: 1.15;
+}
+
+/* Nome na sidebar: Caveat fica ilegível em tamanho pequeno. */
+[data-theme='paper'] :is(aside, dialog) p.font-heading {
+  font-size: 1.375rem;
+}
+
+/* Separadores de seção como linha tracejada de caderno. */
+[data-theme='paper'] main > section {
+  border-bottom-style: dashed;
+}
+
+/* Na sidebar, o marca-texto fica só no nome do item ativo (desenhado pelo slot). */
+[data-theme='paper'] nav a[aria-current='location'] {
+  background-color: transparent;
+}
+
+/* Cards de projeto como post-its. */
+[data-theme='paper'] [data-card='project'] {
+  background-color: var(--theme-surface-alt);
+  border-color: transparent;
+  border-radius: 2px;
+  box-shadow: 3px 5px 10px rgb(43 38 33 / 0.18);
+}
+
+[data-theme='paper'] [data-card='project'] li {
+  background-color: var(--theme-surface);
+}
+
+/* Leve rotação alternada; some com movimento reduzido. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='paper'] [data-card='project'] {
+    rotate: -1.2deg;
+  }
+
+  [data-theme='paper'] [data-card='project']:nth-child(even) {
+    rotate: 1deg;
+  }
+}

@@ -18,7 +18,7 @@ export interface ActiveSection<Id extends string> {
 
 /**
  * Seção atual da página, sincronizada com a rolagem da window. Cada id deve ser
- * de uma `<section>` com um `h2` focável (`tabIndex={-1}`).
+ * de uma `<section>` com um título `h1` ou `h2` focável (`tabIndex={-1}`).
  */
 export function useActiveSection<Id extends string>(
   ids: readonly [Id, ...Id[]],
@@ -125,7 +125,7 @@ export function useActiveSection<Id extends string>(
 
       history.replaceState(history.state, '', `#${id}`);
       section.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
-      section.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true });
+      section.querySelector<HTMLElement>('h1, h2')?.focus({ preventScroll: true });
     },
     [activate, update],
   );

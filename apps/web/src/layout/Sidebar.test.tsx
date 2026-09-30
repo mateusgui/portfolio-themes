@@ -1,11 +1,13 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+import i18n from '../i18n/index.ts';
+import { renderWithProviders } from '../tests/render.tsx';
 import { Sidebar } from './Sidebar.tsx';
 
 function renderSidebar(onNavigate = vi.fn()) {
-  render(<Sidebar activeId="skills" onNavigate={onNavigate} />);
+  renderWithProviders(<Sidebar activeId="skills" onNavigate={onNavigate} />);
   return onNavigate;
 }
 
@@ -50,6 +52,16 @@ describe('Sidebar', () => {
     expect(link).toHaveAttribute('href', href);
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
+  it.each([
+    ['en', 'Resume (opens in a new tab)', '/resume/resume-en.pdf'],
+    ['es', 'Currículum (se abre en una pestaña nueva)', '/resume/curriculo-es.pdf'],
+  ] as const)('em %s, o Currículo aponta para o PDF do idioma', async (language, name, href) => {
+    await i18n.changeLanguage(language);
+    renderSidebar();
+
+    expect(screen.getByRole('link', { name })).toHaveAttribute('href', href);
   });
 
   it('marca só o item ativo com aria-current="location"', () => {

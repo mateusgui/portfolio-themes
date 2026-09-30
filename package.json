@@ -16,6 +16,7 @@
     "typecheck": "npm run typecheck -w web",
     "test": "npm run test -w web",
     "test:e2e": "npm run test:e2e -w web",
+    "resume": "npm run resume -w web",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "npm run format:check && npm run check -w web"

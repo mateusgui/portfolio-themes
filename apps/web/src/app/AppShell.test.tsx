@@ -1,7 +1,8 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
+import { renderWithProviders } from '../tests/render.tsx';
 import { AppShell } from './AppShell.tsx';
 
 function getDrawer() {
@@ -15,7 +16,7 @@ async function openDrawer() {
 
 describe('AppShell', () => {
   it('o skip link é o primeiro elemento focável e aponta para o conteúdo', async () => {
-    render(<AppShell />);
+    renderWithProviders(<AppShell />);
 
     await userEvent.tab();
 
@@ -25,14 +26,20 @@ describe('AppShell', () => {
     expect(screen.getByRole('main')).toHaveAttribute('id', 'conteudo');
   });
 
-  it('renderiza as 7 seções com id estável e título h2', () => {
-    render(<AppShell />);
+  it('renderiza as 7 seções com id estável: o Hero com h1 e as demais com h2', () => {
+    renderWithProviders(<AppShell />);
 
     const main = screen.getByRole('main');
     const headings = within(main).getAllByRole('heading', { level: 2 });
 
+    expect(within(main).getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Mateus Guimarães Moraes Vilela',
+    );
+    expect(screen.getByRole('region', { name: 'Mateus Guimarães Moraes Vilela' })).toHaveAttribute(
+      'id',
+      'inicio',
+    );
     expect(headings.map((heading) => heading.textContent)).toEqual([
-      'Início',
       'Sobre',
       'Skills',
       'Projetos',
@@ -44,7 +51,7 @@ describe('AppShell', () => {
   });
 
   it('navegar pela sidebar destaca o item e foca o título da seção', async () => {
-    render(<AppShell />);
+    renderWithProviders(<AppShell />);
     const sidebar = screen.getByRole('complementary');
 
     await userEvent.click(within(sidebar).getByRole('link', { name: 'Projetos' }));
@@ -58,7 +65,7 @@ describe('AppShell', () => {
 
   describe('drawer mobile', () => {
     it('abre pelo botão de menu', async () => {
-      render(<AppShell />);
+      renderWithProviders(<AppShell />);
 
       const drawer = await openDrawer();
 
@@ -71,7 +78,7 @@ describe('AppShell', () => {
     });
 
     it('fecha pelo botão de fechar', async () => {
-      render(<AppShell />);
+      renderWithProviders(<AppShell />);
       const drawer = await openDrawer();
 
       await userEvent.click(within(drawer).getByRole('button', { name: 'Fechar menu' }));
@@ -84,7 +91,7 @@ describe('AppShell', () => {
     });
 
     it('fecha ao navegar para uma seção', async () => {
-      render(<AppShell />);
+      renderWithProviders(<AppShell />);
       const drawer = await openDrawer();
 
       await userEvent.click(within(drawer).getByRole('link', { name: 'Projetos' }));
@@ -94,7 +101,7 @@ describe('AppShell', () => {
     });
 
     it('fecha ao clicar fora do painel (backdrop)', async () => {
-      render(<AppShell />);
+      renderWithProviders(<AppShell />);
       const drawer = await openDrawer();
 
       fireEvent.click(drawer);
@@ -103,7 +110,7 @@ describe('AppShell', () => {
     });
 
     it('continua aberto ao clicar dentro do painel', async () => {
-      render(<AppShell />);
+      renderWithProviders(<AppShell />);
       const drawer = await openDrawer();
 
       await userEvent.click(within(drawer).getByText('Desenvolvedor Full Stack'));

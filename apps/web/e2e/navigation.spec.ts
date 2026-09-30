@@ -1,5 +1,16 @@
 import { expect, test, type Page } from '@playwright/test';
 
+/**
+ * Abre a página e espera as fontes: a Inter muda a altura do texto ao carregar,
+ * e uma rolagem feita antes disso deixa de estar no fim da página.
+ */
+async function open(page: Page, url: string) {
+  await page.goto(url);
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+  });
+}
+
 /** Item da sidebar com `aria-current`, ou `null`. */
 function currentItem(page: Page) {
   return page.evaluate(
@@ -45,7 +56,7 @@ test.describe('desktop', () => {
   test('CA-04: clicar em "Projetos" destaca desde o clique, sem piscar "Skills"', async ({
     page,
   }) => {
-    await page.goto('/');
+    await open(page, '/');
     const getLog = await recordHighlights(page);
     const sidebar = page.getByRole('complementary');
 
@@ -67,7 +78,7 @@ test.describe('desktop', () => {
   test('CA-05: rolar com o mouse de "Sobre" até "Experiência" acompanha a faixa de leitura', async ({
     page,
   }) => {
-    await page.goto('/');
+    await open(page, '/');
     await page.mouse.move(800, 400);
     const getLog = await recordHighlights(page);
 
@@ -80,7 +91,7 @@ test.describe('desktop', () => {
   });
 
   test('CA-06: no fim da página, "Contato" fica ativo mesmo sendo curta', async ({ page }) => {
-    await page.goto('/');
+    await open(page, '/');
     await page.mouse.move(800, 400);
 
     await page.mouse.wheel(0, 100_000);
@@ -89,7 +100,7 @@ test.describe('desktop', () => {
   });
 
   test('voltar ao topo ativa "Início"', async ({ page }) => {
-    await page.goto('/#skills');
+    await open(page, '/#skills');
     await expect.poll(() => currentItem(page)).toBe('Skills');
 
     await page.evaluate(() => {
@@ -100,7 +111,7 @@ test.describe('desktop', () => {
   });
 
   test('URL com hash abre direto na seção', async ({ page }) => {
-    await page.goto('/#experiencia');
+    await open(page, '/#experiencia');
 
     await expect(page.getByRole('heading', { name: 'Experiência' })).toBeInViewport();
     await expect.poll(() => currentItem(page)).toBe('Experiência');
@@ -108,7 +119,7 @@ test.describe('desktop', () => {
 
   test('com movimento reduzido, a rolagem é instantânea', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto('/');
+    await open(page, '/');
 
     await page.getByRole('complementary').getByRole('link', { name: 'Projetos' }).click();
 
@@ -121,7 +132,7 @@ test.describe('desktop', () => {
 
   test('a sidebar rola até o item ativo quando ele está fora da área visível', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 420 });
-    await page.goto('/');
+    await open(page, '/');
     const sidebar = page.getByRole('complementary');
     const contato = sidebar.getByRole('link', { name: 'Contato' });
     await expect(contato).not.toBeInViewport({ ratio: 1 });
@@ -142,7 +153,7 @@ test.describe('mobile', () => {
   test.skip(({ isMobile }) => !isMobile, 'drawer só existe no mobile');
 
   test('navegar pelo drawer foca o título e marca a seção ativa', async ({ page }) => {
-    await page.goto('/');
+    await open(page, '/');
     const menuButton = page.getByRole('button', { name: 'Abrir menu' });
 
     await menuButton.click();

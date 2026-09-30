@@ -1,0 +1,26 @@
+/*
+ * Hacker: terminal clássico. Fundo preto, verde neon, borda fina, tudo em
+ * monoespaçada e sem cantos arredondados.
+ */
+[data-theme='hacker'] {
+  color-scheme: dark;
+
+  --theme-bg: #000000;
+  --theme-surface: #030803;
+  --theme-surface-alt: #0b1f0e;
+  --theme-fg: #00ff41;
+  --theme-muted: #3fcf5c;
+  --theme-accent: #00ff41;
+  --theme-accent-fg: #000000;
+  --theme-border: #0f6b22;
+  --theme-radius: 0;
+  --theme-font-body: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --theme-font-heading: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --theme-font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --theme-shadow: 0 0 0 1px rgb(0 255 65 / 0.15), 0 0 12px rgb(0 255 65 / 0.12);
+}
+
+/* Brilho leve de fósforo nos títulos. */
+[data-theme='hacker'] :is(h1, h2) {
+  text-shadow: 0 0 8px rgb(0 255 65 / 0.45);
+}

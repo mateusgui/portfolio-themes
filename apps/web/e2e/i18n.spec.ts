@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('CA-07: idioma inicial pelo navegador, sem escolha salva', () => {
-  for (const [locale, lang, skipLink] of [
-    ['pt-BR', 'pt-BR', 'Pular para o conteúdo'],
-    ['es-AR', 'es', 'Saltar al contenido'],
-    ['fr-FR', 'en', 'Skip to content'],
-    ['pt-PT', 'pt-BR', 'Pular para o conteúdo'],
+  for (const [locale, lang, skipLink, languageLabel] of [
+    ['pt-BR', 'pt-BR', 'Pular para o conteúdo', 'Idioma'],
+    ['es-AR', 'es', 'Saltar al contenido', 'Idioma'],
+    ['fr-FR', 'en', 'Skip to content', 'Language'],
+    ['pt-PT', 'pt-BR', 'Pular para o conteúdo', 'Idioma'],
   ] as const) {
     test.describe(`navegador em ${locale}`, () => {
       test.use({ locale });
@@ -15,7 +15,7 @@ test.describe('CA-07: idioma inicial pelo navegador, sem escolha salva', () => {
 
         await expect(page.locator('html')).toHaveAttribute('lang', lang);
         await expect(page.getByRole('link', { name: skipLink })).toBeAttached();
-        await expect(page.getByRole('combobox')).toHaveValue(lang);
+        await expect(page.getByRole('combobox', { name: languageLabel })).toHaveValue(lang);
       });
     });
   }
@@ -60,7 +60,6 @@ test.describe('desktop', () => {
     await page.evaluate(() => {
       Object.assign(window, { sameDocument: true });
     });
-    const scrollBefore = await page.evaluate(() => window.scrollY);
 
     await page.getByRole('combobox', { name: 'Idioma' }).selectOption('en');
 
@@ -69,7 +68,8 @@ test.describe('desktop', () => {
       'location',
     );
     expect(await page.evaluate(() => 'sameDocument' in window)).toBe(true);
-    expect(await page.evaluate(() => window.scrollY)).toBe(scrollBefore);
+    // Os textos mudam de tamanho com o idioma; o que se mantém é a seção atual.
+    await expect(page.getByRole('heading', { name: 'Projects' })).toBeInViewport();
     await expect(page).toHaveURL(/#projetos$/);
   });
 });

@@ -1,22 +1,28 @@
 import { FileTextIcon } from 'lucide-react';
-import { useEffect, useRef, type ComponentType, type MouseEvent } from 'react';
+import { useEffect, useRef, type ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { scrollOffsetToReveal } from '../hooks/scrollSpy.ts';
 import { SECTIONS, type SectionId } from '../sections/sections.ts';
 import { GitHubIcon, LinkedInIcon } from './BrandIcons.tsx';
-import { profile } from './profile.ts';
+import { isModifiedClick } from './isModifiedClick.ts';
+import type { SidebarItemProps } from '../themes/registry.ts';
+import { useThemeSlots } from '../themes/useTheme.ts';
+import { profile, resumeHref } from '../content/profile.ts';
+import { useLanguage } from '../i18n/index.ts';
+import type { Language } from '../i18n/languages.ts';
 
 interface ExternalLink {
-  href: string;
+  href: (language: Language) => string;
   labelKey: 'sidebar.linkedin' | 'sidebar.github' | 'sidebar.resume';
   icon: ComponentType<{ className?: string }>;
 }
 
 const EXTERNAL_LINKS: ExternalLink[] = [
-  { href: profile.links.linkedin, labelKey: 'sidebar.linkedin', icon: LinkedInIcon },
-  { href: profile.links.github, labelKey: 'sidebar.github', icon: GitHubIcon },
-  { href: profile.links.resume, labelKey: 'sidebar.resume', icon: FileTextIcon },
+  { href: () => profile.links.linkedin, labelKey: 'sidebar.linkedin', icon: LinkedInIcon },
+  { href: () => profile.links.github, labelKey: 'sidebar.github', icon: GitHubIcon },
+  // Currículo no idioma atual.
+  { href: resumeHref, labelKey: 'sidebar.resume', icon: FileTextIcon },
 ];
 
 export interface SidebarContentProps {
@@ -25,15 +31,22 @@ export interface SidebarContentProps {
   onNavigate: (id: SectionId) => void;
 }
 
-/** Ctrl/Cmd/Shift/Alt ou botão do meio: deixa o navegador abrir a âncora como quiser. */
-function isModifiedClick(event: MouseEvent) {
-  return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+/** Item padrão: ícone e nome da seção. */
+function DefaultSidebarItem({ label, icon }: SidebarItemProps) {
+  return (
+    <>
+      {icon}
+      {label}
+    </>
+  );
 }
 
 /** Conteúdo da sidebar, compartilhado pela sidebar fixa (desktop) e pelo drawer (mobile). */
 export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
   const { t } = useTranslation();
+  const language = useLanguage();
   const activeLinkRef = useRef<HTMLAnchorElement>(null);
+  const Item = useThemeSlots().SidebarItem ?? DefaultSidebarItem;
 
   // Se o item ativo sair da área visível da sidebar, ela rola até ele. O contêiner
   // que rola (a `<aside>` ou o painel do drawer) é marcado com `data-sidebar-scroll`.
@@ -84,8 +97,12 @@ export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
                     active ? 'bg-surface-alt font-semibold text-accent' : ''
                   }`}
                 >
-                  <Icon aria-hidden="true" className="size-5 shrink-0" />
-                  {t(`sections.${id}`)}
+                  <Item
+                    id={id}
+                    label={t(`sections.${id}`)}
+                    active={active}
+                    icon={<Icon aria-hidden="true" className="size-5 shrink-0" />}
+                  />
                 </a>
               </li>
             );
@@ -98,7 +115,7 @@ export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
           {EXTERNAL_LINKS.map(({ href, labelKey, icon: Icon }) => (
             <li key={labelKey}>
               <a
-                href={href}
+                href={href(language)}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${t(labelKey)} ${t('newTab')}`}

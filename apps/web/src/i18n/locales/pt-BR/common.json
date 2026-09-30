@@ -40,6 +40,24 @@
     "formacao": "Formação",
     "contato": "Contato"
   },
+  "hero": {
+    "available": "Disponível para novas oportunidades",
+    "cta": "Entrar em contato"
+  },
+  "projects": {
+    "private": "Privado",
+    "stack": "Tecnologias",
+    "code": "Ver código",
+    "screenshotsSoon": "Prints em breve"
+  },
+  "contact": {
+    "email": "E-mail",
+    "linkedin": "LinkedIn",
+    "github": "GitHub"
+  },
+  "hacker": {
+    "rain": "Chuva de caracteres"
+  },
   "dates": {
     "present": "o momento"
   }

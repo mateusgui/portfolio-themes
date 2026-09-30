@@ -9,6 +9,7 @@ import { MockIntersectionObserver } from './intersectionObserver.ts';
 // Os testes de componente usam os textos em pt-BR; cada teste começa sem escolha salva.
 beforeEach(async () => {
   localStorage.clear();
+  delete document.documentElement.dataset.theme;
   await i18n.changeLanguage('pt-BR');
 });
 
@@ -46,6 +47,8 @@ Object.defineProperty(window, 'matchMedia', {
 
 // O jsdom não tem `IntersectionObserver` nem `scrollIntoView`.
 window.IntersectionObserver = MockIntersectionObserver;
+// jsdom não desenha em canvas: sem contexto 2D, a chuva de caracteres não anima.
+HTMLCanvasElement.prototype.getContext = () => null;
 Element.prototype.scrollIntoView = function scrollIntoView() {
   // no-op: o jsdom não faz layout.
 };
