@@ -5,7 +5,6 @@
 
 FROM node:24-alpine AS build
 WORKDIR /repo
-ENV HUSKY=0
 
 COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/

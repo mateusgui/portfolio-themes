@@ -18,12 +18,9 @@
     "test:e2e": "npm run test:e2e -w web",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run format:check && npm run check -w web",
-    "prepare": "husky"
+    "check": "npm run format:check && npm run check -w web"
   },
   "devDependencies": {
-    "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1"
   }

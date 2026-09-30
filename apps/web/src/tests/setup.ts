@@ -2,6 +2,8 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';
 
+import { MockIntersectionObserver } from './intersectionObserver.ts';
+
 afterEach(() => {
   cleanup();
 });
@@ -32,4 +34,14 @@ Object.defineProperty(window, 'matchMedia', {
       removeListener: () => undefined,
       dispatchEvent: () => false,
     }) as MediaQueryList,
+});
+
+// O jsdom não tem `IntersectionObserver` nem `scrollIntoView`.
+window.IntersectionObserver = MockIntersectionObserver;
+Element.prototype.scrollIntoView = function scrollIntoView() {
+  // no-op: o jsdom não faz layout.
+};
+
+afterEach(() => {
+  MockIntersectionObserver.instances = [];
 });

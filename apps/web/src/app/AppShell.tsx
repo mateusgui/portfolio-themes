@@ -1,17 +1,33 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { useActiveSection } from '../hooks/useActiveSection.ts';
 import { MobileDrawer } from '../layout/MobileDrawer.tsx';
 import { Navbar } from '../layout/Navbar.tsx';
 import { Sidebar } from '../layout/Sidebar.tsx';
 import { Section } from '../sections/Section.tsx';
-import { SECTIONS } from '../sections/sections.ts';
+import { SECTIONS, type SectionId } from '../sections/sections.ts';
 import { strings } from './strings.ts';
 
 const MENU_ID = 'menu-mobile';
 // Mesmo breakpoint `lg` em que a sidebar fixa aparece.
 const DESKTOP_QUERY = '(min-width: 64rem)';
 
+const SECTION_IDS = SECTIONS.map(({ id }) => id) as [SectionId, ...SectionId[]];
+
+// Provisório até o conteúdo real: alturas variadas (e Contato curta no fim) para
+// exercitar o scroll spy.
+const PLACEHOLDER_HEIGHT: Record<SectionId, string> = {
+  inicio: 'min-h-[70vh]',
+  sobre: 'min-h-[40vh]',
+  skills: 'min-h-[120vh]',
+  projetos: 'min-h-[90vh]',
+  experiencia: 'min-h-[60vh]',
+  formacao: 'min-h-[50vh]',
+  contato: '',
+};
+
 export function AppShell() {
+  const { activeId, navigateTo } = useActiveSection(SECTION_IDS);
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
@@ -45,8 +61,14 @@ export function AppShell() {
           setMenuOpen(true);
         }}
       />
-      <Sidebar />
-      <MobileDrawer id={MENU_ID} open={menuOpen} onClose={closeMenu} />
+      <Sidebar activeId={activeId} onNavigate={navigateTo} />
+      <MobileDrawer
+        id={MENU_ID}
+        open={menuOpen}
+        onClose={closeMenu}
+        activeId={activeId}
+        onNavigate={navigateTo}
+      />
 
       <main
         id="conteudo"
@@ -54,7 +76,12 @@ export function AppShell() {
         className="pt-(--navbar-height) outline-none lg:pl-(--sidebar-width)"
       >
         {SECTIONS.map(({ id }) => (
-          <Section key={id} id={id} title={strings.sections[id]} />
+          <Section
+            key={id}
+            id={id}
+            title={strings.sections[id]}
+            className={PLACEHOLDER_HEIGHT[id]}
+          />
         ))}
       </main>
     </>

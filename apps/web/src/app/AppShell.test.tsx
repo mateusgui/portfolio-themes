@@ -43,6 +43,19 @@ describe('AppShell', () => {
     expect(screen.getByRole('region', { name: 'Projetos' })).toHaveAttribute('id', 'projetos');
   });
 
+  it('navegar pela sidebar destaca o item e foca o título da seção', async () => {
+    render(<AppShell />);
+    const sidebar = screen.getByRole('complementary');
+
+    await userEvent.click(within(sidebar).getByRole('link', { name: 'Projetos' }));
+
+    expect(within(sidebar).getByRole('link', { name: 'Projetos' })).toHaveAttribute(
+      'aria-current',
+      'location',
+    );
+    expect(screen.getByRole('heading', { name: 'Projetos' })).toHaveFocus();
+  });
+
   describe('drawer mobile', () => {
     it('abre pelo botão de menu', async () => {
       render(<AppShell />);
@@ -77,6 +90,7 @@ describe('AppShell', () => {
       await userEvent.click(within(drawer).getByRole('link', { name: 'Projetos' }));
 
       expect(drawer).not.toHaveAttribute('open');
+      expect(screen.getByRole('heading', { name: 'Projetos' })).toHaveFocus();
     });
 
     it('fecha ao clicar fora do painel (backdrop)', async () => {
