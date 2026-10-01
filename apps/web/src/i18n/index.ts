@@ -1,5 +1,4 @@
 import i18n from 'i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next, useTranslation } from 'react-i18next';
 
 import en from './locales/en/common.json';
@@ -7,6 +6,7 @@ import es from './locales/es/common.json';
 import ptBR from './locales/pt-BR/common.json';
 import {
   FALLBACK_LANGUAGE,
+  browserLanguages,
   LANGUAGES,
   detectLanguage,
   isLanguage,
@@ -30,35 +30,22 @@ function syncDocument(language: string) {
     ?.setAttribute('content', i18n.t('meta.description'));
 }
 
-// A regra de detecção é a nossa (`detectLanguage`); o detector só a encaixa no
-// i18next. Sem cache: só a escolha manual é salva, pelo `changeLanguage` abaixo.
-const detector = new LanguageDetector();
-detector.addDetector({
-  name: 'portfolio',
-  lookup: () =>
-    detectLanguage(
-      readSavedLanguage(),
-      navigator.languages.length > 0 ? navigator.languages : [navigator.language],
-    ),
-});
-
 i18n.on('languageChanged', syncDocument);
 
-void i18n
-  .use(detector)
-  .use(initReactI18next)
-  .init({
-    resources,
-    defaultNS: 'common',
-    ns: ['common'],
-    supportedLngs: LANGUAGES.map(({ code }) => code),
-    fallbackLng: FALLBACK_LANGUAGE,
-    load: 'currentOnly',
-    detection: { order: ['portfolio'], caches: [] },
-    // Recursos já vêm no bundle: inicializa de forma síncrona, antes do primeiro render.
-    initAsync: false,
-    interpolation: { escapeValue: false },
-  });
+void i18n.use(initReactI18next).init({
+  // Idioma inicial pela nossa regra (escolha salva > navegador > `en`). Nada é
+  // salvo aqui: só a escolha manual, pelo `changeLanguage` abaixo.
+  lng: detectLanguage(readSavedLanguage(), browserLanguages()),
+  resources,
+  defaultNS: 'common',
+  ns: ['common'],
+  supportedLngs: LANGUAGES.map(({ code }) => code),
+  fallbackLng: FALLBACK_LANGUAGE,
+  load: 'currentOnly',
+  // Recursos já vêm no bundle: inicializa de forma síncrona, antes do primeiro render.
+  initAsync: false,
+  interpolation: { escapeValue: false },
+});
 
 /** Troca de idioma pela escolha do usuário: persiste e vence a detecção nas próximas visitas. */
 export function changeLanguage(language: Language) {

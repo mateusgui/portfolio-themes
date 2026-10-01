@@ -26,13 +26,13 @@ describe('Hero', () => {
     expect(within(hero).getByText('Campo Grande, MS')).toBeInTheDocument();
   });
 
-  it('mostra o selo de disponibilidade quando availability.open é true', () => {
+  it('CA-12: mostra o selo de disponibilidade quando availability.open é true', () => {
     renderWithProviders(<AppShell />);
 
     expect(screen.getByText('Disponível para novas oportunidades')).toBeInTheDocument();
   });
 
-  it('esconde o selo quando availability.open é false', () => {
+  it('CA-12: esconde o selo quando availability.open é false', () => {
     availability.open = false;
 
     renderWithProviders(<AppShell />);
@@ -176,7 +176,7 @@ describe('troca de idioma', () => {
       'nov 2024 – sept 2026',
     ],
   ] as const)(
-    'em %s, conteúdo, selo e datas mudam de idioma',
+    'CA-12: em %s, conteúdo, selo e datas mudam de idioma',
     async (language, role, badge, period) => {
       renderWithProviders(<AppShell />);
 

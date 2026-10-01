@@ -86,8 +86,13 @@ describe('Sidebar', () => {
     expect(window.location.hash).toBe('');
   });
 
-  it('Ctrl+clique segue o comportamento nativo do navegador', () => {
+  it('Ctrl+clique segue o comportamento nativo do navegador', async () => {
     const onNavigate = renderSidebar();
+    // O jsdom segue a âncora de forma assíncrona: espera a navegação terminar aqui,
+    // senão ela cai no meio do próximo teste.
+    const navigated = new Promise((resolve) => {
+      window.addEventListener('hashchange', resolve, { once: true });
+    });
 
     const allowed = fireEvent.click(screen.getByRole('link', { name: 'Projetos' }), {
       ctrlKey: true,
@@ -95,5 +100,7 @@ describe('Sidebar', () => {
 
     expect(allowed).toBe(true);
     expect(onNavigate).not.toHaveBeenCalled();
+    await navigated;
+    expect(window.location.hash).toBe('#projetos');
   });
 });

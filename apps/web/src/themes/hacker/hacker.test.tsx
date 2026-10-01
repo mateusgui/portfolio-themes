@@ -30,6 +30,16 @@ function typeLetters(count: number) {
   }
 }
 
+/** O que aparece na tela: letras já digitadas e o cursor no fim (as demais ficam invisíveis). */
+function visibleTyping() {
+  const typed = screen.getByTestId('typed');
+  return [...typed.children]
+    .filter((child) => !child.classList.contains('invisible'))
+    .filter((child) => !child.classList.contains('bg-accent'))
+    .map((child) => child.textContent)
+    .join('');
+}
+
 function sidebarLinks() {
   return within(screen.getByRole('complementary')).getAllByRole('link');
 }
@@ -76,13 +86,15 @@ describe('tema Hacker', () => {
       const typed = screen.getByTestId('typed');
 
       expect(screen.getByRole('heading', { level: 1, name: NAME })).toBeInTheDocument();
-      expect(typed).toHaveTextContent(/^█$/);
+      // O nome inteiro já ocupa o lugar (sem layout shift); nada está visível ainda.
+      expect(typed).toHaveTextContent(`${NAME}█`);
+      expect(visibleTyping()).toBe('');
 
       typeLetters(6);
-      expect(typed).toHaveTextContent(/^Mateus█$/);
+      expect(visibleTyping()).toBe('Mateus');
 
       typeLetters(NAME.length);
-      expect(typed).toHaveTextContent(`${NAME}█`);
+      expect(visibleTyping()).toBe(`${NAME}█`);
     });
 
     it('com movimento reduzido, mostra o nome inteiro de uma vez', () => {
@@ -90,7 +102,7 @@ describe('tema Hacker', () => {
 
       renderWithProviders(<AppShell />);
 
-      expect(screen.getByTestId('typed')).toHaveTextContent(`${NAME}█`);
+      expect(visibleTyping()).toBe(`${NAME}█`);
     });
 
     it('as seções ganham o prefixo "#" sem mudar o nome acessível', () => {

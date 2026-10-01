@@ -58,6 +58,24 @@
   "hacker": {
     "rain": "Character rain"
   },
+  "retro": {
+    "marquee": "Welcome to my portfolio! Thanks for stopping by, come back soon! Best viewed in any browser.",
+    "pauseMarquee": "Pause marquee",
+    "visitors": "Visitors",
+    "construction": "Under construction"
+  },
+  "vscode": {
+    "openFiles": "Open files",
+    "files": {
+      "inicio": "index",
+      "sobre": "about",
+      "skills": "skills",
+      "projetos": "projects",
+      "experiencia": "experience",
+      "formacao": "education",
+      "contato": "contact"
+    }
+  },
   "dates": {
     "present": "present"
   }

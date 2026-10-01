@@ -1,0 +1,144 @@
+/*
+ * Retrô: página pessoal dos anos 90/2000. Área de trabalho verde-azulada com
+ * tile de estrelas, janelas cinza com bordas 3D (bevel), links azuis e roxos e
+ * fontes de sistema da época (nada é baixado).
+ */
+[data-theme='retro'] {
+  color-scheme: light;
+
+  --theme-bg: #00a0a0;
+  --theme-surface: #c0c0c0;
+  --theme-surface-alt: #ffff00;
+  --theme-fg: #000000;
+  --theme-muted: #000080;
+  --theme-accent: #0000ee;
+  --theme-accent-fg: #ffffff;
+  --theme-border: #808080;
+  --theme-focus: #000000;
+  --theme-radius: 0;
+  --theme-font-body: Verdana, Geneva, Tahoma, sans-serif;
+  --theme-font-heading: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive;
+  --theme-font-mono: 'Courier New', Courier, monospace;
+  /* Bevel em relevo: luz em cima/esquerda, sombra embaixo/direita. */
+  --theme-shadow:
+    inset -1px -1px 0 #000000, inset 1px 1px 0 #ffffff, inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+
+  /* Extras do Retrô, fora do contrato de tokens. */
+  --retro-sunken:
+    inset -1px -1px 0 #ffffff, inset 1px 1px 0 #000000, inset -2px -2px 0 #dfdfdf,
+    inset 2px 2px 0 #808080;
+  --retro-title: linear-gradient(90deg, #000080, #0000cd);
+  --retro-title-fg: #ffffff;
+  --retro-visited: #551a8b;
+  --retro-name: #990000;
+  --retro-window-padding: 1.25rem;
+  --retro-bar-height: 2.75rem;
+}
+
+/* Tile de estrelas: SVG de poucos bytes, sem imagem. */
+html[data-theme='retro'] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M14 4l2.4 6.6h7l-5.6 4.2 2.1 6.7L14 17.4l-5.9 4.1 2.1-6.7-5.6-4.2h7z' fill='%23ffff00' fill-opacity='.3'/%3E%3Ccircle cx='42' cy='40' r='2' fill='%23ffffff' fill-opacity='.45'/%3E%3Ccircle cx='30' cy='50' r='1' fill='%23ffffff' fill-opacity='.45'/%3E%3C/svg%3E");
+}
+
+/* Foco pontilhado preto, como no Windows da época: visível sobre cinza, azul e verde-azulado. */
+[data-theme='retro'] :focus-visible {
+  outline-style: dotted;
+}
+
+/* Navbar como barra de ferramentas; botões e seletores em relevo. */
+[data-theme='retro'] header {
+  box-shadow: var(--theme-shadow);
+}
+
+[data-theme='retro'] header :is(button, select) {
+  border-color: transparent;
+  box-shadow: var(--theme-shadow);
+}
+
+[data-theme='retro'] header button[aria-pressed='true'] {
+  box-shadow: var(--retro-sunken);
+}
+
+/* Sidebar: seções como botões bevel com link azul sublinhado; o ativo afunda. */
+[data-theme='retro'] [data-nav='sections'] a {
+  background-color: var(--theme-surface);
+  box-shadow: var(--theme-shadow);
+  color: var(--theme-accent);
+  font-weight: normal;
+}
+
+[data-theme='retro'] [data-nav='sections'] a:hover {
+  background-color: var(--theme-surface-alt);
+}
+
+[data-theme='retro'] [data-nav='sections'] a[aria-current='location'] {
+  background-color: var(--theme-surface-alt);
+  box-shadow: var(--retro-sunken);
+  color: var(--retro-visited);
+  font-weight: bold;
+}
+
+[data-theme='retro'] [data-nav='sections'] ul {
+  gap: 0.375rem;
+}
+
+/* Links externos: azuis e sublinhados; roxos depois de visitados. */
+[data-theme='retro']
+  :is([data-nav='external'] a, main a[target='_blank'], main a[href^='mailto:']) {
+  color: var(--theme-accent);
+  text-decoration: underline;
+}
+
+[data-theme='retro']
+  :is([data-nav='external'] a, main a[target='_blank'], main a[href^='mailto:']):visited {
+  color: var(--retro-visited);
+}
+
+/* Cada seção é uma janela cinza sobre a área de trabalho. */
+[data-theme='retro'] main {
+  padding-bottom: var(--retro-bar-height);
+}
+
+[data-theme='retro'] main > section {
+  border-bottom: 0;
+  padding-block: 2rem;
+}
+
+[data-theme='retro'] main > section > div {
+  background-color: var(--theme-surface);
+  box-shadow: var(--theme-shadow);
+  padding: var(--retro-window-padding);
+}
+
+/* Título da seção como barra de título azul, colada no topo da janela. */
+[data-theme='retro'] main h2 {
+  margin: calc(2px - var(--retro-window-padding)) calc(2px - var(--retro-window-padding)) 0;
+  padding: 0.25rem 0.25rem 0.25rem 0.625rem;
+  background-image: var(--retro-title);
+  color: var(--retro-title-fg);
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: normal;
+}
+
+/* Nome do Hero em Times, vermelho escuro com relevo claro (a sombra não reduz o contraste). */
+[data-theme='retro'] main h1 {
+  font-family: 'Times New Roman', Times, serif;
+  color: var(--retro-name);
+  text-shadow: 2px 2px 0 #ffffff;
+}
+
+[data-theme='retro'] main h3 {
+  color: var(--theme-muted);
+}
+
+/* Cartões internos em relevo, sem a borda fina do layout. */
+[data-theme='retro'] main :is(article, [data-card]) {
+  border-color: transparent;
+}
+
+/* Selo "em construção": listras amarelas e pretas. */
+[data-theme='retro'] [data-retro='stripes'] {
+  background-image: repeating-linear-gradient(-45deg, #ffff00 0 6px, #000000 6px 12px);
+}

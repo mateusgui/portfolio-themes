@@ -13,6 +13,7 @@
  *   --theme-accent       destaque (texto ou fundo)
  *   --theme-accent-fg    texto sobre accent
  *   --theme-border       bordas
+ *   --theme-focus        anel de foco (contraste 3:1 sobre bg e surface)
  *   --theme-radius       raio dos cantos
  *   --theme-font-body / --theme-font-heading / --theme-font-mono
  *   --theme-shadow       sombra de painéis
@@ -20,3 +21,5 @@
 @import './minimal.css';
 @import './hacker.css';
 @import './paper.css';
+@import './retro.css';
+@import './vscode.css';

@@ -13,6 +13,8 @@ interface ContactLink {
   text: string;
   icon: ComponentType<{ className?: string }>;
   external: boolean;
+  /** Chave no formato de variável de ambiente, para temas que mostram `CHAVE=valor`. */
+  envKey: string;
 }
 
 /** `https://www.linkedin.com/in/x` → `linkedin.com/in/x`. */
@@ -28,6 +30,7 @@ const LINKS: ContactLink[] = [
     text: profile.email,
     icon: MailIcon,
     external: false,
+    envKey: 'EMAIL',
   },
   {
     labelKey: 'contact.linkedin',
@@ -35,6 +38,7 @@ const LINKS: ContactLink[] = [
     text: displayUrl(profile.links.linkedin),
     icon: LinkedInIcon,
     external: true,
+    envKey: 'LINKEDIN',
   },
   {
     labelKey: 'contact.github',
@@ -42,6 +46,7 @@ const LINKS: ContactLink[] = [
     text: displayUrl(profile.links.github),
     icon: GitHubIcon,
     external: true,
+    envKey: 'GITHUB',
   },
 ];
 
@@ -53,8 +58,8 @@ export function Contact() {
     <Section id="contato" title={t('sections.contato')}>
       <p className="max-w-prose text-lg leading-relaxed">{contact.intro}</p>
       <ul className="flex flex-col gap-4">
-        {LINKS.map(({ labelKey, href, text, icon: Icon, external }) => (
-          <li key={labelKey} className="flex items-center gap-3">
+        {LINKS.map(({ labelKey, href, text, icon: Icon, external, envKey }) => (
+          <li key={labelKey} data-env-key={envKey} className="flex items-center gap-3">
             <Icon aria-hidden="true" className="size-5 shrink-0 text-accent" />
             <span className="sr-only">{t(labelKey)}:</span>
             <a

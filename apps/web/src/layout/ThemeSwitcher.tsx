@@ -2,12 +2,13 @@ import { ChevronDownIcon, PaletteIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { THEMES, isThemeId } from '../themes/registry.ts';
-import { useTheme } from '../themes/useTheme.ts';
+import { useTheme, useThemeSlots } from '../themes/useTheme.ts';
 
 /** Seletor de temas: 5 botões a partir de `md`; `<select>` compacto em telas menores. */
 export function ThemeSwitcher() {
   const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
+  const ButtonContent = useThemeSlots().ThemeButton;
 
   return (
     <>
@@ -22,7 +23,11 @@ export function ThemeSwitcher() {
             }}
             className="rounded-theme border border-border px-3 py-1 text-sm hover:bg-surface-alt aria-pressed:bg-accent aria-pressed:text-accent-fg"
           >
-            {t(labelKey)}
+            {ButtonContent ? (
+              <ButtonContent theme={id} label={t(labelKey)} pressed={id === theme} />
+            ) : (
+              t(labelKey)
+            )}
           </button>
         ))}
       </div>

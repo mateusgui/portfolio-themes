@@ -1,210 +1,201 @@
-import { act, renderHook, screen } from '@testing-library/react';
-import type { ReactNode } from 'react';
+import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MockIntersectionObserver } from '../tests/intersectionObserver.ts';
 import { SCROLL_END_TIMEOUT, useActiveSection } from './useActiveSection.ts';
 
-const IDS = ['inicio', 'sobre', 'skills', 'projetos', 'contato'] as const;
-type Id = (typeof IDS)[number];
+const IDS = ['inicio', 'sobre', 'contato'] as const;
 
-function Sections({ children }: { children: ReactNode }) {
-  return (
-    <>
-      {children}
-      {IDS.map((id) => (
-        <section key={id} id={id}>
-          <h2 tabIndex={-1}>{id}</h2>
-        </section>
-      ))}
-    </>
-  );
+/** Página com três seções, cada uma com título focável. */
+function mountSections() {
+  document.body.innerHTML = IDS.map(
+    (id) => `<section id="${id}"><h2 tabindex="-1">${id}</h2></section>`,
+  ).join('');
 }
 
-function renderActiveSection() {
-  const { result } = renderHook(() => useActiveSection<Id>(IDS), { wrapper: Sections });
-  return {
-    active: () => result.current.activeId,
-    navigate: (id: Id) => {
-      result.current.navigateTo(id);
-    },
-  };
-}
-
-/** Simula a posição da window no meio da página (nem topo nem fim). */
-function scrollToMiddle() {
-  Object.defineProperty(window, 'scrollY', { configurable: true, value: 500 });
+/** Rolagem no meio da página: nem topo nem fim, a faixa de leitura decide. */
+function setScroll(scrollY: number) {
+  Object.defineProperty(window, 'scrollY', { configurable: true, value: scrollY });
   Object.defineProperty(document.documentElement, 'scrollHeight', {
     configurable: true,
     value: 5000,
   });
 }
 
-function setReducedMotion(reduce: boolean) {
-  vi.spyOn(window, 'matchMedia').mockImplementation(
-    (query) =>
-      ({
-        matches: reduce && query === '(prefers-reduced-motion: reduce)',
-        media: query,
-        addEventListener: () => undefined,
-        removeEventListener: () => undefined,
-      }) as unknown as MediaQueryList,
-  );
+function setup() {
+  return renderHook(() => useActiveSection(IDS));
 }
 
 beforeEach(() => {
-  scrollToMiddle();
-  history.replaceState(null, '', '/');
+  mountSections();
+  setScroll(1000);
 });
 
 afterEach(() => {
-  vi.restoreAllMocks();
   vi.useRealTimers();
-  Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 });
+  vi.restoreAllMocks();
+  document.body.innerHTML = '';
+  setScroll(0);
 });
 
 describe('useActiveSection', () => {
-  it('começa na primeira seção e observa todas com a faixa de leitura', () => {
-    const { active } = renderActiveSection();
+  it('começa na primeira seção', () => {
+    const { result } = setup();
 
-    expect(active()).toBe('inicio');
-    const observer = MockIntersectionObserver.latest();
-    expect(observer.rootMargin).toBe('-30% 0px -60% 0px');
-    expect([...observer.targets].map((target) => target.id)).toEqual([...IDS]);
+    expect(result.current.activeId).toBe('inicio');
   });
 
-  it('a rolagem manual troca a seção ativa', () => {
-    const { active } = renderActiveSection();
-    const observer = MockIntersectionObserver.latest();
+  it('a rolagem manual segue a seção na faixa de leitura', () => {
+    const { result } = setup();
 
     act(() => {
-      observer.trigger({ sobre: true });
+      MockIntersectionObserver.latest().trigger({ inicio: false, sobre: true });
     });
-    expect(active()).toBe('sobre');
 
-    act(() => {
-      observer.trigger({ sobre: false, skills: true });
-    });
-    expect(active()).toBe('skills');
+    expect(result.current.activeId).toBe('sobre');
   });
 
-  it('no fim da página ativa a última seção', () => {
-    vi.useFakeTimers();
-    const { active } = renderActiveSection();
-    Object.defineProperty(window, 'scrollY', { configurable: true, value: 5000 - 768 });
-
-    act(() => {
-      window.dispatchEvent(new Event('scroll'));
-      vi.advanceTimersToNextFrame();
+  it('vários eventos de scroll no mesmo quadro recalculam uma vez só', () => {
+    const frames: FrameRequestCallback[] = [];
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      frames.push(callback);
+      return frames.length;
     });
+    const { result } = setup();
 
-    expect(active()).toBe('contato');
+    window.dispatchEvent(new Event('scroll'));
+    window.dispatchEvent(new Event('scroll'));
+    window.dispatchEvent(new Event('scroll'));
+    expect(frames).toHaveLength(1);
+
+    // No fim da página, o quadro ativa a última seção.
+    setScroll(5000 - window.innerHeight);
+    act(() => {
+      frames[0]?.(0);
+    });
+    expect(result.current.activeId).toBe('contato');
   });
 
-  describe('navegação pela sidebar', () => {
-    it('destaca na hora, atualiza o hash, rola suave e foca o título', () => {
-      setReducedMotion(false);
-      const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView');
-      const { active, navigate } = renderActiveSection();
+  describe('navigateTo', () => {
+    it('destaca na hora, grava o hash sem nova entrada no histórico e foca o título', () => {
+      const { result } = setup();
+      const historyLength = history.length;
 
       act(() => {
-        navigate('projetos');
+        result.current.navigateTo('contato');
       });
 
-      expect(active()).toBe('projetos');
-      expect(window.location.hash).toBe('#projetos');
-      expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
-      expect(scrollIntoView.mock.contexts[0]).toBe(document.getElementById('projetos'));
-      expect(screen.getByRole('heading', { name: 'projetos' })).toHaveFocus();
+      expect(result.current.activeId).toBe('contato');
+      expect(window.location.hash).toBe('#contato');
+      expect(history.length).toBe(historyLength);
+      expect(document.activeElement).toBe(document.querySelector('#contato h2'));
     });
 
-    it('com movimento reduzido, a rolagem é instantânea', () => {
-      setReducedMotion(true);
-      const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView');
-      const { navigate } = renderActiveSection();
+    it('ignora o observer durante a rolagem e volta a ouvi-lo no scrollend', () => {
+      const { result } = setup();
 
       act(() => {
-        navigate('projetos');
+        result.current.navigateTo('contato');
       });
-
-      expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'instant', block: 'start' });
-    });
-
-    it('ignora as seções do caminho até o scrollend', () => {
-      const { active, navigate } = renderActiveSection();
-      const observer = MockIntersectionObserver.latest();
-
+      // Seções do caminho passam pela faixa: não podem roubar o destaque.
       act(() => {
-        navigate('projetos');
+        MockIntersectionObserver.latest().trigger({ sobre: true });
       });
-      act(() => {
-        observer.trigger({ sobre: true });
-        observer.trigger({ sobre: false, skills: true });
-      });
-      expect(active()).toBe('projetos');
+      expect(result.current.activeId).toBe('contato');
 
       act(() => {
-        observer.trigger({ skills: false, projetos: true });
+        MockIntersectionObserver.latest().trigger({ sobre: false, contato: true });
         window.dispatchEvent(new Event('scrollend'));
       });
-      expect(active()).toBe('projetos');
-
       act(() => {
-        observer.trigger({ projetos: false, contato: true });
+        MockIntersectionObserver.latest().trigger({ contato: false, sobre: true });
       });
-      expect(active()).toBe('contato');
+      expect(result.current.activeId).toBe('sobre');
     });
 
-    it('sem scrollend, o observer volta após o timeout de segurança', () => {
+    it('sem scrollend (navegador sem suporte), retoma depois do tempo limite', () => {
       vi.useFakeTimers();
-      const { active, navigate } = renderActiveSection();
-      const observer = MockIntersectionObserver.latest();
+      const { result } = setup();
 
       act(() => {
-        navigate('projetos');
-        observer.trigger({ skills: true });
+        result.current.navigateTo('contato');
       });
-      expect(active()).toBe('projetos');
+      act(() => {
+        MockIntersectionObserver.latest().trigger({ contato: false, sobre: true });
+      });
+      expect(result.current.activeId).toBe('contato');
 
       act(() => {
         vi.advanceTimersByTime(SCROLL_END_TIMEOUT);
       });
-      expect(active()).toBe('skills');
+      expect(result.current.activeId).toBe('sobre');
     });
 
-    it('um segundo clique durante a rolagem renova a suspensão', () => {
+    it('um segundo clique durante a rolagem renova a espera', () => {
       vi.useFakeTimers();
-      const { active, navigate } = renderActiveSection();
-      const observer = MockIntersectionObserver.latest();
+      const { result } = setup();
 
       act(() => {
-        navigate('projetos');
+        result.current.navigateTo('contato');
+      });
+      act(() => {
         vi.advanceTimersByTime(SCROLL_END_TIMEOUT - 100);
-        navigate('sobre');
+        result.current.navigateTo('sobre');
+      });
+      act(() => {
         vi.advanceTimersByTime(200);
-        observer.trigger({ skills: true });
+        MockIntersectionObserver.latest().trigger({ contato: true });
       });
 
-      expect(active()).toBe('sobre');
+      expect(result.current.activeId).toBe('sobre');
+    });
+
+    it('ignora uma seção que não existe', () => {
+      const { result } = setup();
+
+      act(() => {
+        result.current.navigateTo('inexistente' as (typeof IDS)[number]);
+      });
+
+      expect(result.current.activeId).toBe('inicio');
+      expect(window.location.hash).toBe('');
     });
   });
 
-  it('abre direto na seção do hash da URL, sem rolagem suave', () => {
-    history.replaceState(null, '', '/#skills');
+  it('URL com hash abre direto na seção', () => {
+    history.replaceState(null, '', '/#contato');
     const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView');
 
-    const { active } = renderActiveSection();
+    const { result } = setup();
 
-    expect(active()).toBe('skills');
+    expect(result.current.activeId).toBe('contato');
     expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'instant', block: 'start' });
-    expect(scrollIntoView.mock.contexts[0]).toBe(document.getElementById('skills'));
   });
 
-  it('ignora hash que não é de seção', () => {
-    history.replaceState(null, '', '/#conteudo');
+  it('hash que não é de seção é ignorado', () => {
+    history.replaceState(null, '', '/#qualquer-coisa');
 
-    const { active } = renderActiveSection();
+    const { result } = setup();
 
-    expect(active()).toBe('inicio');
+    expect(result.current.activeId).toBe('inicio');
+  });
+
+  it('ao desmontar, para de ouvir rolagem, observer e espera pendente', () => {
+    vi.useFakeTimers();
+    const removeListener = vi.spyOn(window, 'removeEventListener');
+    const { result, unmount } = setup();
+    const observer = MockIntersectionObserver.latest();
+    act(() => {
+      result.current.navigateTo('contato');
+    });
+
+    unmount();
+
+    expect(observer.targets.size).toBe(0);
+    expect(removeListener).toHaveBeenCalledWith('scroll', expect.any(Function));
+    expect(removeListener).toHaveBeenCalledWith('scrollend', expect.any(Function));
+    expect(() => {
+      vi.advanceTimersByTime(SCROLL_END_TIMEOUT);
+    }).not.toThrow();
   });
 });

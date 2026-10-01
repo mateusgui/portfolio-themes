@@ -1,14 +1,10 @@
 /*
  * Minimalista: claro, texto grafite, um único acento e muito espaço.
  *
- * Também vale para `:root` (antes do script aplicar o tema, ou sem JS) e,
- * provisoriamente, para os temas que ainda não têm tokens próprios: cada um sai
- * desta lista quando ganhar o seu arquivo.
+ * Também vale para `:root` (antes do script aplicar o tema, ou sem JS).
  */
 :root,
-[data-theme='minimal'],
-[data-theme='retro'],
-[data-theme='vscode'] {
+[data-theme='minimal'] {
   color-scheme: light;
 
   --theme-bg: #f7f7f8;
@@ -19,6 +15,7 @@
   --theme-accent: #4338ca;
   --theme-accent-fg: #ffffff;
   --theme-border: #d8dce2;
+  --theme-focus: #4338ca;
   --theme-radius: 0.5rem;
   --theme-font-body: 'Inter Variable', system-ui, sans-serif;
   --theme-font-heading: 'Inter Variable', system-ui, sans-serif;

@@ -18,6 +18,9 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
+# Cache local do Wrangler (Cloudflare)
+.wrangler/
+
 # Logs
 logs/
 *.log

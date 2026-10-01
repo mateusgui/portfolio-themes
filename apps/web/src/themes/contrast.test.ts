@@ -6,10 +6,11 @@ const sheets = import.meta.glob<string>('./tokens/*.css', {
   eager: true,
 });
 
-/** Tokens `--theme-*` com cor hexadecimal declarados num arquivo de tema. */
-function colorTokens(css: string) {
+/** Variáveis `--<prefixo>-*` com cor hexadecimal declaradas num arquivo de tema. */
+function colorTokens(css: string, prefix = 'theme') {
   const tokens: Record<string, string> = {};
-  for (const match of css.matchAll(/--theme-([\w-]+):\s*(#[0-9a-f]{3,6})\s*;/gi)) {
+  const pattern = new RegExp(String.raw`--${prefix}-([\w-]+):\s*(#[0-9a-f]{3,6})\s*;`, 'gi');
+  for (const match of css.matchAll(pattern)) {
     const [, name, value] = match;
     if (name && value) tokens[name] = value;
   }
@@ -43,9 +44,15 @@ const PAIRS = [
   ['accent-fg', 'accent'],
 ] as const;
 
+// Anel de foco: componente de interface, 3:1 sobre os fundos onde aparece (WCAG 1.4.11).
+const FOCUS_PAIRS = [
+  ['focus', 'bg'],
+  ['focus', 'surface'],
+] as const;
+
 const themeSheets = Object.entries(sheets).filter(([path]) => !path.endsWith('/tokens.css'));
 
-describe('contraste WCAG AA dos temas', () => {
+describe('CA-10: contraste WCAG AA dos temas', () => {
   it('existe pelo menos um tema com tokens', () => {
     expect(themeSheets.length).toBeGreaterThan(0);
   });
@@ -59,5 +66,23 @@ describe('contraste WCAG AA dos temas', () => {
       if (!fg || !bg) throw new Error(`Faltam os tokens --theme-${text} ou --theme-${background}`);
       expect(contrast(fg, bg)).toBeGreaterThanOrEqual(4.5);
     });
+
+    it.each(FOCUS_PAIRS)('%s sobre %s tem contraste de pelo menos 3:1', (ring, background) => {
+      const fg = tokens[ring];
+      const bg = tokens[background];
+      if (!fg || !bg) throw new Error(`Faltam os tokens --theme-${ring} ou --theme-${background}`);
+      expect(contrast(fg, bg)).toBeGreaterThanOrEqual(3);
+    });
+
+    // Cores de destaque de sintaxe (só em temas que as usam) pintam texto sobre o fundo.
+    const syntax = Object.entries(colorTokens(css, 'syntax'));
+    it.skipIf(syntax.length === 0).each(syntax)(
+      '--syntax-%s sobre bg tem contraste de pelo menos 4.5:1',
+      (_name, color) => {
+        const bg = tokens.bg;
+        if (!bg) throw new Error('Falta o token --theme-bg');
+        expect(contrast(color, bg)).toBeGreaterThanOrEqual(4.5);
+      },
+    );
   });
 });

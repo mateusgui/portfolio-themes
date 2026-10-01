@@ -3,21 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mateus Guimarães | Desenvolvedor Full Stack</title>
-    <meta
-      name="description"
-      content="Portfólio de Mateus Guimarães, desenvolvedor full stack: projetos, experiência, formação e contato."
-    />
+    <!-- Title, description, Open Graph, hreflang e JSON-LD: gerados no build (scripts/seo). -->
+    <!-- seo -->
     <!--
       Roda antes da pintura para não piscar outro tema. Tema: ?tema= > escolha
-      salva > prefers-color-scheme (escuro abre VS Code). ?tema= e ?lang= válidos
-      contam como escolha manual: são salvos e saem da URL. As chaves e os ids
-      precisam bater com src/themes/registry.ts e src/i18n/languages.ts.
+      salva > prefers-color-scheme (escuro abre VS Code). ?tema= e ?lang= válidos,
+      e as páginas de idioma (/pt/, /en/, /es/), contam como escolha manual: são
+      salvos e saem da URL. As chaves, os ids e os caminhos precisam bater com
+      src/themes/registry.ts e src/i18n/languages.ts.
     -->
     <script>
       (function () {
         var THEMES = ['hacker', 'retro', 'minimal', 'vscode', 'paper'];
         var LANGUAGES = ['pt-BR', 'en', 'es'];
+        var LANGUAGE_PATHS = { '/pt/': 'pt-BR', '/en/': 'en', '/es/': 'es' };
         var storage = null;
         try {
           storage = window.localStorage;
@@ -40,14 +39,18 @@
         }
 
         var url = new URL(window.location.href);
+        var pathLang = LANGUAGE_PATHS[url.pathname.replace(/\/?$/, '/')] || null;
         var queryTheme = url.searchParams.get('tema');
         var queryLang = url.searchParams.get('lang');
         if (THEMES.indexOf(queryTheme) !== -1) save('portfolio:theme', queryTheme);
+        // ?lang= vence o caminho quando os dois aparecem.
         if (LANGUAGES.indexOf(queryLang) !== -1) save('portfolio:lang', queryLang);
-        if (url.searchParams.has('tema') || url.searchParams.has('lang')) {
+        else if (pathLang) save('portfolio:lang', pathLang);
+        if (pathLang || url.searchParams.has('tema') || url.searchParams.has('lang')) {
           url.searchParams.delete('tema');
           url.searchParams.delete('lang');
-          history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+          var path = pathLang ? '/' : url.pathname;
+          history.replaceState(history.state, '', path + url.search + url.hash);
         }
 
         var theme = THEMES.indexOf(queryTheme) !== -1 ? queryTheme : read('portfolio:theme');
@@ -56,6 +59,16 @@
           theme = dark ? 'vscode' : 'minimal';
         }
         document.documentElement.dataset.theme = theme;
+
+        // Chunk dos slots do tema (o app espera por ele antes do primeiro render):
+        // pedido já aqui, em paralelo com o JS principal. Mapa preenchido no build.
+        var THEME_CHUNKS = /* theme-chunks */ {};
+        if (THEME_CHUNKS[theme]) {
+          var preload = document.createElement('link');
+          preload.rel = 'modulepreload';
+          preload.href = THEME_CHUNKS[theme];
+          document.head.appendChild(preload);
+        }
       })();
     </script>
   </head>

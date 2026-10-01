@@ -69,7 +69,7 @@ test.describe('desktop', () => {
   });
 });
 
-test.describe('com movimento reduzido', () => {
+test.describe('CA-11: com movimento reduzido', () => {
   test.use({ reducedMotion: 'reduce' });
 
   test('os post-its ficam retos', async ({ page }) => {

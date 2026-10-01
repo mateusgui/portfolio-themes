@@ -8,7 +8,7 @@ O próprio site é a demonstração técnica: design system baseado em tokens, t
 
 ## Stack
 
-React, Vite, TypeScript (strict), Tailwind CSS com CSS variables, Framer Motion, i18next, Vitest, Testing Library e Playwright.
+React, Vite, TypeScript (strict), Tailwind CSS com CSS variables, i18next, Vitest, Testing Library, Playwright e axe. As animações são em CSS e respeitam `prefers-reduced-motion`.
 
 ## Como rodar
 
@@ -22,6 +22,8 @@ npm run dev        # servidor de desenvolvimento
 npm run check      # formatação, lint, tipos e testes
 npx -w web playwright install chromium   # só na primeira vez
 npm run test:e2e   # testes e2e (Playwright)
+npm run resume     # regenera os currículos em PDF a partir do conteúdo
+npm run og         # regenera as imagens de compartilhamento e o ícone
 ```
 
 Com Docker (opcional):
@@ -31,7 +33,7 @@ docker build -f apps/web/Dockerfile -t portfolio-web .
 docker run --rm -p 8080:80 portfolio-web   # http://localhost:8080
 ```
 
-Variáveis de ambiente: copie `apps/web/.env.example` para `apps/web/.env`. Toda variável `VITE_*` é pública.
+Variáveis de ambiente: copie `apps/web/.env.example` para `apps/web/.env`. Toda variável `VITE_*` é pública. `VITE_SITE_URL` é a URL pública do site, usada no build em canonical, Open Graph e sitemap (no Docker, passe com `--build-arg VITE_SITE_URL=...`).
 
 ## Licença
 

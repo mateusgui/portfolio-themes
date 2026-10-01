@@ -15,8 +15,10 @@
     "lint": "npm run lint -w web",
     "typecheck": "npm run typecheck -w web",
     "test": "npm run test -w web",
+    "test:coverage": "npm run test:coverage -w web",
     "test:e2e": "npm run test:e2e -w web",
     "resume": "npm run resume -w web",
+    "og": "npm run og -w web",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "npm run format:check && npm run check -w web"

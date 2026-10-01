@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ComponentType } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useActiveSection } from '../hooks/useActiveSection.ts';
@@ -15,6 +15,7 @@ import type { SectionBodyProps } from '../sections/sectionBody.ts';
 import { Skills } from '../sections/Skills.tsx';
 import { SECTIONS, type SectionId } from '../sections/sections.ts';
 import { useThemeSlots } from '../themes/useTheme.ts';
+import { ActiveSectionContext } from './ActiveSectionContext.ts';
 
 const MENU_ID = 'menu-mobile';
 // Mesmo breakpoint `lg` em que a sidebar fixa aparece.
@@ -36,6 +37,7 @@ const SECTION_COMPONENTS: Record<SectionId, ComponentType<SectionBodyProps>> = {
 export function AppShell() {
   const { t } = useTranslation();
   const { activeId, navigateTo } = useActiveSection(SECTION_IDS);
+  const activeSection = useMemo(() => ({ activeId, navigateTo }), [activeId, navigateTo]);
   const { Decoration } = useThemeSlots();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => {
@@ -55,15 +57,13 @@ export function AppShell() {
   }, []);
 
   return (
-    <>
+    <ActiveSectionContext value={activeSection}>
       <a
         href="#conteudo"
         className="sr-only z-50 bg-accent px-4 py-2 text-accent-fg focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
       >
         {t('skipLink')}
       </a>
-
-      {Decoration && <Decoration />}
 
       <Navbar
         menuId={MENU_ID}
@@ -72,6 +72,7 @@ export function AppShell() {
           setMenuOpen(true);
         }}
       />
+      {Decoration && <Decoration />}
       <Sidebar activeId={activeId} onNavigate={navigateTo} />
       <MobileDrawer
         id={MENU_ID}
@@ -91,6 +92,6 @@ export function AppShell() {
           return <SectionBody key={id} onNavigate={navigateTo} />;
         })}
       </main>
-    </>
+    </ActiveSectionContext>
   );
 }

@@ -36,8 +36,11 @@ function ProjectCard({ project }: { project: Project }) {
               <img
                 src={image.src}
                 alt={image.alt}
+                width={image.width}
+                height={image.height}
                 loading="lazy"
-                className="w-full rounded-theme border border-border"
+                decoding="async"
+                className="h-auto w-full rounded-theme border border-border"
               />
             </li>
           ))}

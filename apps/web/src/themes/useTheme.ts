@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 
-import { getTheme, type ThemeDefinition, type ThemeId } from './registry.ts';
+import { getLoadedSlots } from './loadThemeSlots.ts';
+import type { ThemeId, ThemeSlots } from './registry.ts';
 
 export interface ThemeContextValue {
   theme: ThemeId;
@@ -16,8 +17,10 @@ export function useTheme(): ThemeContextValue {
   return context;
 }
 
-/** Slots do tema atual (vazio quando o tema só troca tokens). */
-export function useThemeSlots(): NonNullable<ThemeDefinition['slots']> {
+const NO_SLOTS: ThemeSlots = {};
+
+/** Slots do tema atual (vazio quando o tema só troca tokens ou o chunk não chegou). */
+export function useThemeSlots(): ThemeSlots {
   const { theme } = useTheme();
-  return getTheme(theme).slots ?? {};
+  return getLoadedSlots(theme) ?? NO_SLOTS;
 }

@@ -39,6 +39,17 @@
   }
 }
 
+/* Letreiro do Retrô: o conteúdo vem duplicado, então -50% fecha o ciclo sem salto. */
+@theme {
+  --animate-marquee: marquee 25s linear infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
 /* Medidas do layout global, iguais em todos os temas. */
 :root {
   --navbar-height: 3.5rem;
@@ -68,7 +79,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--theme-accent);
+    outline: 2px solid var(--theme-focus);
     outline-offset: 2px;
   }
 }

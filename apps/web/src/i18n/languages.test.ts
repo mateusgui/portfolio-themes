@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { detectLanguage } from './languages.ts';
+import { browserLanguages, detectLanguage, readSavedLanguage, saveLanguage } from './languages.ts';
 
 describe('detectLanguage', () => {
   it.each([
@@ -35,5 +35,42 @@ describe('detectLanguage', () => {
   it('ignora escolha salva inválida', () => {
     expect(detectLanguage('fr', ['pt-BR'])).toBe('pt-BR');
     expect(detectLanguage('', ['es'])).toBe('es');
+  });
+});
+
+describe('preferências do navegador', () => {
+  it('usa a lista de idiomas quando existe', () => {
+    expect(browserLanguages({ languages: ['es-AR', 'en'], language: 'es-AR' })).toEqual([
+      'es-AR',
+      'en',
+    ]);
+  });
+
+  it('cai no idioma único quando a lista vem vazia', () => {
+    expect(browserLanguages({ languages: [], language: 'fr-FR' })).toEqual(['fr-FR']);
+  });
+});
+
+describe('escolha salva com localStorage bloqueado (modo privado, políticas)', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('ler devolve null em vez de quebrar', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('bloqueado', 'SecurityError');
+    });
+
+    expect(readSavedLanguage()).toBeNull();
+  });
+
+  it('salvar não quebra (a escolha vale só para a visita)', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('cheio', 'QuotaExceededError');
+    });
+
+    expect(() => {
+      saveLanguage('es');
+    }).not.toThrow();
   });
 });

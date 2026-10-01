@@ -37,6 +37,39 @@ async function recordHighlights(page: Page) {
   return () => page.evaluate(() => (window as unknown as { highlightLog: string[] }).highlightLog);
 }
 
+/** Espera dois quadros: callbacks do observer e o render do React já rodaram. */
+function nextFrames(page: Page) {
+  return page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            resolve();
+          });
+        });
+      }),
+  );
+}
+
+/** Começa a ouvir o `scrollend` antes da ação; devolve a espera por ele. */
+async function listenScrollEnd(page: Page) {
+  await page.evaluate(() => {
+    Object.assign(window, {
+      scrollEnded: new Promise<void>((resolve) => {
+        window.addEventListener(
+          'scrollend',
+          () => {
+            resolve();
+          },
+          { once: true },
+        );
+      }),
+    });
+  });
+  return () =>
+    page.evaluate(() => (window as unknown as { scrollEnded: Promise<void> }).scrollEnded);
+}
+
 /** Espera a rolagem da window parar. */
 async function waitForScrollToSettle(page: Page) {
   let last = -1;
@@ -59,15 +92,16 @@ test.describe('desktop', () => {
     await open(page, '/');
     const getLog = await recordHighlights(page);
     const sidebar = page.getByRole('complementary');
+    const scrollEnded = await listenScrollEnd(page);
 
     await sidebar.getByRole('link', { name: 'Projetos' }).click();
     await expect(sidebar.getByRole('link', { name: 'Projetos' })).toHaveAttribute(
       'aria-current',
       'location',
     );
-    await waitForScrollToSettle(page);
     // Depois do scrollend o observer volta e precisa concordar com o clique.
-    await page.waitForTimeout(300);
+    await scrollEnded();
+    await nextFrames(page);
 
     expect(await getLog()).toEqual(['Projetos']);
     await expect(page).toHaveURL(/#projetos$/);
@@ -82,9 +116,10 @@ test.describe('desktop', () => {
     await page.mouse.move(800, 400);
     const getLog = await recordHighlights(page);
 
+    // Passos curtos, cada um esperando o observer e o render: nenhuma seção é pulada.
     for (let i = 0; i < 100 && (await currentItem(page)) !== 'Experiência'; i++) {
       await page.mouse.wheel(0, 100);
-      await page.waitForTimeout(50);
+      await nextFrames(page);
     }
 
     expect(await getLog()).toEqual(['Sobre', 'Skills', 'Projetos', 'Experiência']);
@@ -117,7 +152,39 @@ test.describe('desktop', () => {
     await expect.poll(() => currentItem(page)).toBe('Experiência');
   });
 
-  test('com movimento reduzido, a rolagem é instantânea', async ({ page }) => {
+  test('clicar grava o hash sem criar entradas no histórico', async ({ page }) => {
+    await open(page, '/');
+    const sidebar = page.getByRole('complementary');
+    const historyLength = await page.evaluate(() => history.length);
+
+    await sidebar.getByRole('link', { name: 'Skills' }).click();
+    await expect(page).toHaveURL(/#skills$/);
+    await sidebar.getByRole('link', { name: 'Formação' }).click();
+    await expect(page).toHaveURL(/#formacao$/);
+
+    // `replaceState`: o Voltar do navegador não passa por cada seção clicada.
+    expect(await page.evaluate(() => history.length)).toBe(historyLength);
+  });
+
+  test('o hash continua valendo ao recarregar', async ({ page }) => {
+    await open(page, '/');
+    await page.getByRole('complementary').getByRole('link', { name: 'Formação' }).click();
+    await expect(page).toHaveURL(/#formacao$/);
+
+    await page.reload();
+
+    await expect(page.getByRole('heading', { name: 'Formação', exact: true })).toBeInViewport();
+    await expect.poll(() => currentItem(page)).toBe('Formação');
+  });
+
+  test('hash que não é de seção é ignorado', async ({ page }) => {
+    await open(page, '/#nao-existe');
+
+    await expect.poll(() => currentItem(page)).toBe('Início');
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  });
+
+  test('CA-11: com movimento reduzido, a rolagem é instantânea', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page, '/');
 
@@ -151,6 +218,16 @@ test.describe('desktop', () => {
 
 test.describe('mobile', () => {
   test.skip(({ isMobile }) => !isMobile, 'drawer só existe no mobile');
+
+  test('URL com hash abre direto na seção', async ({ page }) => {
+    await open(page, '/#experiencia');
+
+    await expect(page.getByRole('heading', { name: 'Experiência' })).toBeInViewport();
+    await page.getByRole('button', { name: 'Abrir menu' }).click();
+    await expect(
+      page.getByRole('dialog', { name: 'Menu' }).getByRole('link', { name: 'Experiência' }),
+    ).toHaveAttribute('aria-current', 'location');
+  });
 
   test('navegar pelo drawer foca o título e marca a seção ativa', async ({ page }) => {
     await open(page, '/');

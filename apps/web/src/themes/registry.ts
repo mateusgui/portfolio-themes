@@ -1,8 +1,6 @@
 import type { ComponentType, ReactNode } from 'react';
 
 import type { SectionId } from '../sections/sections.ts';
-import { hackerTheme } from './hacker/index.ts';
-import { paperTheme } from './paper/index.ts';
 
 export const THEME_IDS = ['hacker', 'retro', 'minimal', 'vscode', 'paper'] as const;
 
@@ -28,11 +26,11 @@ export interface SectionHeaderProps {
   level: 1 | 2;
 }
 
+/** Conteúdo do botão de tema; o `<button>` (clique, `aria-pressed`) fica com o seletor. */
 export interface ThemeButtonProps {
   theme: ThemeId;
   label: string;
   pressed: boolean;
-  onSelect: () => void;
 }
 
 /**
@@ -51,20 +49,17 @@ export interface ThemeDefinition {
   }>;
 }
 
-// Temas com definição própria; os demais usam só tokens (os do Minimalista, até ganharem os seus).
-const DEFINITIONS: Partial<Record<ThemeId, ThemeDefinition>> = {
-  hacker: hackerTheme,
-  paper: paperTheme,
-};
+export type ThemeSlots = NonNullable<ThemeDefinition['slots']>;
 
-export const THEMES: readonly ThemeDefinition[] = THEME_IDS.map(
-  (id) => DEFINITIONS[id] ?? { id, labelKey: `themes.${id}` },
-);
+/**
+ * Temas do seletor, na ordem da navbar. Os slots ficam fora daqui: cada tema é
+ * um chunk carregado sob demanda (`loadThemeSlots.ts`).
+ */
+export const THEMES: readonly Pick<ThemeDefinition, 'id' | 'labelKey'>[] = THEME_IDS.map((id) => ({
+  id,
+  labelKey: `themes.${id}`,
+}));
 
 export function isThemeId(value: unknown): value is ThemeId {
   return THEME_IDS.some((id) => id === value);
-}
-
-export function getTheme(id: ThemeId): ThemeDefinition {
-  return THEMES.find((theme) => theme.id === id) ?? { id, labelKey: `themes.${id}` };
 }

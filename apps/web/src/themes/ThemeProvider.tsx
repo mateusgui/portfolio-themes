@@ -1,19 +1,11 @@
-import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
-import { DEFAULT_THEME, THEME_STORAGE_KEY, isThemeId, type ThemeId } from './registry.ts';
+import { readAppliedTheme } from './appliedTheme.ts';
+import { getLoadedSlots, loadThemeSlots } from './loadThemeSlots.ts';
+import { THEME_IDS, THEME_STORAGE_KEY, type ThemeId } from './registry.ts';
 import { ThemeContext } from './useTheme.ts';
 
-/**
- * Tema inicial: o que o script inline do `index.html` já aplicou antes da pintura
- * (query string > escolha salva > `prefers-color-scheme`).
- */
-function readAppliedTheme(): ThemeId {
-  const applied = document.documentElement.dataset.theme;
-  return isThemeId(applied) ? applied : DEFAULT_THEME;
-}
-
-function applyTheme(theme: ThemeId) {
-  document.documentElement.dataset.theme = theme;
+function saveTheme(theme: ThemeId) {
   try {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch {
@@ -31,9 +23,40 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return initial;
   });
 
+  // Última escolha: se o usuário trocar de novo antes de um chunk chegar, vale a mais recente.
+  const requestedRef = useRef(theme);
+
+  // Tokens e slots trocam juntos: se o chunk do tema ainda não chegou, o tema
+  // atual continua até ele chegar (normalmente já veio no pré-carregamento).
+  // A escolha é salva na hora (vale mesmo se a página recarregar antes do chunk).
   const setTheme = useCallback((next: ThemeId) => {
-    applyTheme(next);
-    setThemeState(next);
+    requestedRef.current = next;
+    saveTheme(next);
+    const apply = () => {
+      if (requestedRef.current !== next) return;
+      document.documentElement.dataset.theme = next;
+      setThemeState(next);
+    };
+    if (getLoadedSlots(next)) apply();
+    else void loadThemeSlots(next).then(apply);
+  }, []);
+
+  // Com a página pronta, baixa os outros temas quando o navegador estiver ocioso.
+  useEffect(() => {
+    const preload = () => {
+      for (const id of THEME_IDS) void loadThemeSlots(id);
+    };
+    if ('requestIdleCallback' in window) {
+      const handle = window.requestIdleCallback(preload, { timeout: 3000 });
+      return () => {
+        window.cancelIdleCallback(handle);
+      };
+    }
+    // Safari sem `requestIdleCallback` (o `in` acima estreita `window` para `never` aqui).
+    const timer = setTimeout(preload, 1500);
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   const value = useMemo(() => ({ theme, setTheme }), [theme, setTheme]);

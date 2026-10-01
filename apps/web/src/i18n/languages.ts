@@ -9,6 +9,17 @@ export type Language = (typeof LANGUAGES)[number]['code'];
 
 export const FALLBACK_LANGUAGE: Language = 'en';
 
+/**
+ * Página pré-gerada de cada idioma (SEO e prévia de compartilhamento). Abrir uma
+ * delas conta como escolha manual; o script inline do `index.html` repete estes
+ * caminhos e precisa bater com eles.
+ */
+export const LANGUAGE_PATHS: Record<Language, `/${string}/`> = {
+  'pt-BR': '/pt/',
+  en: '/en/',
+  es: '/es/',
+};
+
 /** Chave do `localStorage` com a escolha manual do usuário. */
 export const LANGUAGE_STORAGE_KEY = 'portfolio:lang';
 
@@ -37,6 +48,13 @@ export function detectLanguage(saved: string | null, preferred: readonly string[
   }
 
   return FALLBACK_LANGUAGE;
+}
+
+/** Preferências do navegador; alguns só expõem `navigator.language`. */
+export function browserLanguages(
+  nav: Pick<Navigator, 'languages' | 'language'> = navigator,
+): readonly string[] {
+  return nav.languages.length > 0 ? nav.languages : [nav.language];
 }
 
 /** Lê a escolha salva; o `localStorage` pode estar bloqueado (modo privado, políticas). */

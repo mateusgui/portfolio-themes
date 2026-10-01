@@ -1,0 +1,10 @@
+// Publicação na Cloudflare como Worker com static assets (sem código de servidor).
+// O build (`npm run build`, na raiz) gera apps/web/dist, que é servido como está.
+{
+  // Precisa ser idêntico ao nome do projeto no painel da Cloudflare.
+  "name": "portfolio-themes",
+  "compatibility_date": "2026-09-30",
+  "assets": {
+    "directory": "./apps/web/dist",
+  },
+}

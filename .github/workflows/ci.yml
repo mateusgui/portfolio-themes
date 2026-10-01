@@ -22,8 +22,30 @@ jobs:
 
       - run: npm ci
 
-      - name: Lint, tipos e testes
-        run: npm run check
+      # Mesmo que `npm run check`, mas os testes unitários rodam com cobertura:
+      # abaixo de 80% em tema, i18n ou navegação (RNF-06), o job falha.
+      - name: Formatação
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tipos
+        run: npm run typecheck
+
+      - name: Testes unitários com cobertura
+        run: npm run test:coverage
+
+      - name: Resumo da cobertura
+        if: ${{ !cancelled() }}
+        run: npm run coverage:summary -w web --silent >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: coverage-report
+          path: apps/web/coverage/
+          retention-days: 7
 
       - name: Instalar navegadores do Playwright
         run: npx -w web playwright install --with-deps chromium

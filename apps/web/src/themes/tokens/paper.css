@@ -13,6 +13,7 @@
   --theme-accent: #1f3b8f;
   --theme-accent-fg: #fdf8ec;
   --theme-border: #b9a88a;
+  --theme-focus: #1f3b8f;
   /* Cantos desiguais, como traço de caneta. */
   --theme-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
   --theme-font-body: 'Source Serif 4 Variable', Georgia, serif;

@@ -58,6 +58,24 @@
   "hacker": {
     "rain": "Lluvia de caracteres"
   },
+  "retro": {
+    "marquee": "¡Bienvenido(a) a mi portafolio! ¡Gracias por la visita, vuelve pronto! Se ve mejor en cualquier navegador.",
+    "pauseMarquee": "Pausar marquesina",
+    "visitors": "Visitantes",
+    "construction": "En construcción"
+  },
+  "vscode": {
+    "openFiles": "Archivos abiertos",
+    "files": {
+      "inicio": "index",
+      "sobre": "sobre-mi",
+      "skills": "habilidades",
+      "projetos": "proyectos",
+      "experiencia": "experiencia",
+      "formacao": "formacion",
+      "contato": "contacto"
+    }
+  },
   "dates": {
     "present": "la actualidad"
   }

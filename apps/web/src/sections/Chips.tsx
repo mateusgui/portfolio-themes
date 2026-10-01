@@ -6,7 +6,7 @@ interface ChipsProps {
 /** Lista de tecnologias como chips. */
 export function Chips({ items, label }: ChipsProps) {
   return (
-    <ul aria-label={label} className="flex flex-wrap gap-2">
+    <ul aria-label={label} data-chips className="flex flex-wrap gap-2">
       {items.map((item) => (
         <li
           key={item}

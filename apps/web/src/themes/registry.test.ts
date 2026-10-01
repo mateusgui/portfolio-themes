@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { resources } from '../i18n/index.ts';
-import { THEMES, getTheme, isThemeId } from './registry.ts';
+import { getLoadedSlots, loadThemeSlots } from './loadThemeSlots.ts';
+import { THEMES, isThemeId } from './registry.ts';
 
 describe('registro de temas', () => {
   it('registra os 5 temas na ordem da navbar', () => {
@@ -22,7 +23,16 @@ describe('registro de temas', () => {
     expect(isThemeId(null)).toBe(false);
   });
 
-  it('getTheme devolve a definição do tema', () => {
-    expect(getTheme('vscode').id).toBe('vscode');
+  it('carrega os slots de cada tema sob demanda, uma vez só', async () => {
+    const slots = await loadThemeSlots('vscode');
+
+    expect(slots.SidebarItem).toBeDefined();
+    expect(slots.Decoration).toBeDefined();
+    expect(getLoadedSlots('vscode')).toBe(slots);
+    expect(await loadThemeSlots('vscode')).toBe(slots);
+  });
+
+  it('o Minimalista não tem slots: só tokens', async () => {
+    expect(await loadThemeSlots('minimal')).toEqual({});
   });
 });

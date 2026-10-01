@@ -1,0 +1,282 @@
+/*
+ * VS Code: o portfólio como um editor (paleta inspirada no Dark+). Conteúdo em
+ * monoespaçada; barras e explorer em fonte de sistema, como na IDE.
+ */
+[data-theme='vscode'] {
+  color-scheme: dark;
+
+  --theme-bg: #1e1e1e;
+  --theme-surface: #252526;
+  --theme-surface-alt: #37373d;
+  --theme-fg: #d4d4d4;
+  --theme-muted: #a6a6a6;
+  --theme-accent: #4daafc;
+  --theme-accent-fg: #1e1e1e;
+  --theme-border: #3c3c3c;
+  --theme-focus: #4daafc;
+  --theme-radius: 0;
+  --theme-font-body: 'JetBrains Mono Variable', Consolas, ui-monospace, monospace;
+  --theme-font-heading: 'JetBrains Mono Variable', Consolas, ui-monospace, monospace;
+  --theme-font-mono: 'JetBrains Mono Variable', Consolas, ui-monospace, monospace;
+  --theme-shadow: 0 0 0 1px #3c3c3c;
+
+  /* Destaque de sintaxe (contraste AA sobre o fundo, testado como os tokens). */
+  --syntax-keyword: #569cd6;
+  --syntax-control: #c586c0;
+  --syntax-string: #ce9178;
+  --syntax-function: #dcdcaa;
+  --syntax-comment: #6a9955;
+  --syntax-type: #4ec9b0;
+  --syntax-variable: #9cdcfe;
+  --syntax-tag: #999999;
+
+  /* Extras do VS Code, fora do contrato de tokens. */
+  --vscode-font-ui: 'Segoe WPC', 'Segoe UI', system-ui, sans-serif;
+  --vscode-titlebar: #323233;
+  --vscode-selection: #04395e;
+  --vscode-focus: #007fd4;
+  --vscode-tab-inactive: #2d2d2d;
+  --vscode-statusbar: #0065a9;
+  --vscode-statusbar-fg: #ffffff;
+  --vscode-line-number: #858585;
+  --vscode-tabs-height: 2.25rem;
+  --vscode-status-height: 1.5rem;
+  --vscode-gutter: 3.5rem;
+  /* Números de linha da margem (1 a 400), gerados uma vez; não é conteúdo. */
+  --vscode-lines: '1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 10\A 11\A 12\A 13\A 14\A 15\A 16\A 17\A 18\A 19\A 20\A 21\A 22\A 23\A 24\A 25\A 26\A 27\A 28\A 29\A 30\A 31\A 32\A 33\A 34\A 35\A 36\A 37\A 38\A 39\A 40\A 41\A 42\A 43\A 44\A 45\A 46\A 47\A 48\A 49\A 50\A 51\A 52\A 53\A 54\A 55\A 56\A 57\A 58\A 59\A 60\A 61\A 62\A 63\A 64\A 65\A 66\A 67\A 68\A 69\A 70\A 71\A 72\A 73\A 74\A 75\A 76\A 77\A 78\A 79\A 80\A 81\A 82\A 83\A 84\A 85\A 86\A 87\A 88\A 89\A 90\A 91\A 92\A 93\A 94\A 95\A 96\A 97\A 98\A 99\A 100\A 101\A 102\A 103\A 104\A 105\A 106\A 107\A 108\A 109\A 110\A 111\A 112\A 113\A 114\A 115\A 116\A 117\A 118\A 119\A 120\A 121\A 122\A 123\A 124\A 125\A 126\A 127\A 128\A 129\A 130\A 131\A 132\A 133\A 134\A 135\A 136\A 137\A 138\A 139\A 140\A 141\A 142\A 143\A 144\A 145\A 146\A 147\A 148\A 149\A 150\A 151\A 152\A 153\A 154\A 155\A 156\A 157\A 158\A 159\A 160\A 161\A 162\A 163\A 164\A 165\A 166\A 167\A 168\A 169\A 170\A 171\A 172\A 173\A 174\A 175\A 176\A 177\A 178\A 179\A 180\A 181\A 182\A 183\A 184\A 185\A 186\A 187\A 188\A 189\A 190\A 191\A 192\A 193\A 194\A 195\A 196\A 197\A 198\A 199\A 200\A 201\A 202\A 203\A 204\A 205\A 206\A 207\A 208\A 209\A 210\A 211\A 212\A 213\A 214\A 215\A 216\A 217\A 218\A 219\A 220\A 221\A 222\A 223\A 224\A 225\A 226\A 227\A 228\A 229\A 230\A 231\A 232\A 233\A 234\A 235\A 236\A 237\A 238\A 239\A 240\A 241\A 242\A 243\A 244\A 245\A 246\A 247\A 248\A 249\A 250\A 251\A 252\A 253\A 254\A 255\A 256\A 257\A 258\A 259\A 260\A 261\A 262\A 263\A 264\A 265\A 266\A 267\A 268\A 269\A 270\A 271\A 272\A 273\A 274\A 275\A 276\A 277\A 278\A 279\A 280\A 281\A 282\A 283\A 284\A 285\A 286\A 287\A 288\A 289\A 290\A 291\A 292\A 293\A 294\A 295\A 296\A 297\A 298\A 299\A 300\A 301\A 302\A 303\A 304\A 305\A 306\A 307\A 308\A 309\A 310\A 311\A 312\A 313\A 314\A 315\A 316\A 317\A 318\A 319\A 320\A 321\A 322\A 323\A 324\A 325\A 326\A 327\A 328\A 329\A 330\A 331\A 332\A 333\A 334\A 335\A 336\A 337\A 338\A 339\A 340\A 341\A 342\A 343\A 344\A 345\A 346\A 347\A 348\A 349\A 350\A 351\A 352\A 353\A 354\A 355\A 356\A 357\A 358\A 359\A 360\A 361\A 362\A 363\A 364\A 365\A 366\A 367\A 368\A 369\A 370\A 371\A 372\A 373\A 374\A 375\A 376\A 377\A 378\A 379\A 380\A 381\A 382\A 383\A 384\A 385\A 386\A 387\A 388\A 389\A 390\A 391\A 392\A 393\A 394\A 395\A 396\A 397\A 398\A 399\A 400';
+}
+
+/* Barras, explorer e drawer em fonte de interface. */
+[data-theme='vscode'] :is(header, aside, dialog, [data-vscode]) {
+  font-family: var(--vscode-font-ui);
+}
+
+/* Navbar como barra de título. */
+[data-theme='vscode'] header {
+  background-color: var(--vscode-titlebar);
+}
+
+/* Seletor de temas como a lista "Color Theme": itens planos, o atual selecionado. */
+[data-theme='vscode'] header [role='group'] {
+  gap: 0;
+  border: 1px solid var(--theme-border);
+  background-color: var(--theme-surface);
+}
+
+[data-theme='vscode'] header [role='group'] button {
+  border-color: transparent;
+}
+
+[data-theme='vscode'] header [role='group'] button[aria-pressed='true'] {
+  background-color: var(--vscode-selection);
+  color: var(--vscode-statusbar-fg);
+  box-shadow: inset 0 0 0 1px var(--vscode-focus);
+}
+
+/* Explorer: cabeçalho vindo do nome da navegação, itens compactos. */
+[data-theme='vscode'] [data-nav='sections']::before {
+  content: attr(aria-label) / '';
+  display: block;
+  padding: 0 0.75rem 0.5rem;
+  color: var(--theme-muted);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+[data-theme='vscode'] [data-nav='sections'] ul {
+  gap: 0;
+}
+
+[data-theme='vscode'] [data-nav='sections'] a {
+  gap: 0.5rem;
+  padding-block: 0.25rem;
+  font-size: 0.875rem;
+}
+
+[data-theme='vscode'] [data-nav='sections'] a[aria-current='location'] {
+  color: var(--theme-fg);
+  font-weight: normal;
+  box-shadow: inset 0 0 0 1px var(--vscode-focus);
+}
+
+/* Ícones de arquivo por extensão (decorativos). */
+[data-theme='vscode'] [data-file-icon] {
+  color: var(--syntax-variable);
+}
+
+[data-theme='vscode'] :is([data-file-icon='md'], [data-file-icon='ts']) {
+  color: var(--syntax-keyword);
+}
+
+[data-theme='vscode'] :is([data-file-icon='json'], [data-file-icon='py']) {
+  color: var(--syntax-function);
+}
+
+[data-theme='vscode'] [data-file-icon='php'] {
+  color: var(--syntax-control);
+}
+
+[data-theme='vscode'] [data-file-icon='env'] {
+  color: var(--syntax-string);
+}
+
+/* Abas: inativas escuras, a atual da cor do editor com linha azul em cima. */
+[data-theme='vscode'] [data-vscode='tabs'] {
+  background-color: var(--theme-surface);
+}
+
+[data-theme='vscode'] [data-vscode='tab'] {
+  background-color: var(--vscode-tab-inactive);
+  color: var(--theme-muted);
+}
+
+[data-theme='vscode'] [data-vscode='tab']:is([aria-current='location'], [data-active]) {
+  background-color: var(--theme-bg);
+  color: var(--theme-fg);
+  box-shadow: inset 0 1px 0 var(--vscode-focus);
+}
+
+[data-theme='vscode'] [data-vscode='status'] {
+  background-color: var(--vscode-statusbar);
+  color: var(--vscode-statusbar-fg);
+}
+
+/* Espaço para as abas (em cima) e a status bar (embaixo). */
+[data-theme='vscode'] main {
+  padding-top: calc(var(--navbar-height) + var(--vscode-tabs-height));
+  padding-bottom: var(--vscode-status-height);
+}
+
+[data-theme='vscode'] aside[data-sidebar-scroll] {
+  bottom: var(--vscode-status-height);
+}
+
+/* Cada seção é um arquivo, com números de linha na margem. */
+[data-theme='vscode'] main > section {
+  position: relative;
+  scroll-margin-top: calc(var(--navbar-height) + var(--vscode-tabs-height));
+  padding-left: calc(var(--vscode-gutter) + 1rem);
+}
+
+[data-theme='vscode'] main > section::before {
+  content: var(--vscode-lines) / '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--vscode-gutter);
+  overflow: hidden;
+  padding: 4rem 1rem 0 0;
+  color: var(--vscode-line-number);
+  font-family: var(--theme-font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.5rem;
+  text-align: right;
+  white-space: pre;
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (width < 40rem) {
+  [data-theme='vscode'] {
+    --vscode-gutter: 2.25rem;
+  }
+
+  [data-theme='vscode'] main > section {
+    padding-right: 1rem;
+  }
+
+  [data-theme='vscode'] main > section::before {
+    padding-right: 0.5rem;
+  }
+}
+
+/* Títulos como a primeira linha do arquivo. */
+[data-theme='vscode'] main :is(h1, h2) {
+  font-weight: normal;
+  letter-spacing: normal;
+}
+
+[data-theme='vscode'] main h2 {
+  font-size: 1.5rem;
+}
+
+/* Destaque de sintaxe leve: cores por papel, texto corrido intacto. */
+[data-theme='vscode'] [data-syntax='keyword'] {
+  color: var(--syntax-keyword);
+}
+
+[data-theme='vscode'] [data-syntax='control'] {
+  color: var(--syntax-control);
+}
+
+[data-theme='vscode'] [data-syntax='string'] {
+  color: var(--syntax-string);
+}
+
+[data-theme='vscode'] [data-syntax='comment'] {
+  color: var(--syntax-comment);
+}
+
+[data-theme='vscode'] [data-syntax='type'] {
+  color: var(--syntax-type);
+}
+
+[data-theme='vscode'] [data-syntax='variable'] {
+  color: var(--syntax-variable);
+}
+
+[data-theme='vscode'] [data-syntax='tag'] {
+  color: var(--syntax-tag);
+}
+
+[data-theme='vscode'] main h3 {
+  color: var(--syntax-function);
+  font-weight: normal;
+}
+
+/* Chips de tecnologia como strings. */
+[data-theme='vscode'] [data-chips] li {
+  border-color: transparent;
+  background-color: transparent;
+  padding-inline: 0;
+  color: var(--syntax-string);
+}
+
+[data-theme='vscode'] [data-chips] li::before {
+  content: '"' / '';
+}
+
+[data-theme='vscode'] [data-chips] li::after {
+  content: '",' / '';
+}
+
+[data-theme='vscode'] [data-chips] li:last-child::after {
+  content: '"' / '';
+}
+
+/* contato.env: CHAVE=valor, sem ícones; o texto de apoio vira comentário. */
+[data-theme='vscode'] [data-env-key] {
+  gap: 0;
+}
+
+[data-theme='vscode'] [data-env-key] > svg {
+  display: none;
+}
+
+[data-theme='vscode'] [data-env-key]::before {
+  content: attr(data-env-key) '=' / '';
+  color: var(--syntax-variable);
+}
+
+[data-theme='vscode'] [data-env-key] a {
+  color: var(--syntax-string);
+  font-weight: normal;
+}
+
+[data-theme='vscode'] #contato > div > p {
+  color: var(--syntax-comment);
+}
+
+[data-theme='vscode'] #contato > div > p::before {
+  content: '# ' / '';
+}

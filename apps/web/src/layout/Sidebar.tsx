@@ -78,7 +78,7 @@ export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
         </div>
       </div>
 
-      <nav aria-label={t('sidebar.sectionsNav')}>
+      <nav aria-label={t('sidebar.sectionsNav')} data-nav="sections">
         <ul className="flex flex-col gap-1">
           {SECTIONS.map(({ id, icon: Icon }) => {
             const active = id === activeId;
@@ -110,7 +110,7 @@ export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
         </ul>
       </nav>
 
-      <nav aria-label={t('sidebar.externalLinks')} className="mt-auto">
+      <nav aria-label={t('sidebar.externalLinks')} data-nav="external" className="mt-auto">
         <ul className="flex flex-col gap-1">
           {EXTERNAL_LINKS.map(({ href, labelKey, icon: Icon }) => (
             <li key={labelKey}>

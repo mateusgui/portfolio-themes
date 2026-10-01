@@ -1,13 +1,23 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach, beforeEach } from 'vitest';
+import { afterEach, beforeAll, beforeEach } from 'vitest';
 
 import i18n from '../i18n/index.ts';
+import { loadThemeSlots } from '../themes/loadThemeSlots.ts';
+import { THEME_IDS } from '../themes/registry.ts';
 
 import { MockIntersectionObserver } from './intersectionObserver.ts';
 
+// No app, os slots de cada tema chegam em chunks sob demanda; nos testes, já
+// estão todos carregados para que a troca de tema seja síncrona.
+beforeAll(async () => {
+  await Promise.all(THEME_IDS.map(loadThemeSlots));
+});
+
 // Os testes de componente usam os textos em pt-BR; cada teste começa sem escolha salva.
 beforeEach(async () => {
+  // A navegação grava o hash (`#projetos`): sem limpar, o próximo teste nasceria nessa seção.
+  history.replaceState(null, '', '/');
   localStorage.clear();
   delete document.documentElement.dataset.theme;
   await i18n.changeLanguage('pt-BR');

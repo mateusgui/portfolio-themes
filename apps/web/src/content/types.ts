@@ -17,9 +17,12 @@ export interface ExperienceEntry {
   highlights: readonly string[];
 }
 
+/** Print de projeto: WebP ou AVIF em `public/`, com o tamanho real (evita layout shift). */
 export interface ProjectImage {
-  src: string;
+  src: `/${string}.${'webp' | 'avif'}`;
   alt: string;
+  width: number;
+  height: number;
 }
 
 export interface Project {
