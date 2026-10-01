@@ -15,7 +15,7 @@ import {
   THRESHOLD,
   groupCoverage,
   type FileCoverage,
-} from './coverage/modules.ts';
+} from './coverage-report/modules.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const summary = JSON.parse(
