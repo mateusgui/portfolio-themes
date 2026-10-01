@@ -1,4 +1,4 @@
-# Imagem opcional do front (o deploy do MVP é estático, sem Docker).
+# Imagem opcional do front, para rodar localmente (a publicação é na Cloudflare).
 # Build a partir da raiz do monorepo:
 #   docker build -f apps/web/Dockerfile -t portfolio-web .
 #   docker run --rm -p 8080:80 portfolio-web

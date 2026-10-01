@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
 
+import { headersPlugin } from './scripts/headers/plugin.ts';
 import { seoPlugin } from './scripts/seo/plugin.ts';
 import { themeChunksPlugin } from './scripts/themeChunks/plugin.ts';
 
@@ -18,8 +19,9 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    // O de chunks vem antes do de SEO, que copia o index.html já completo.
-    plugins: [react(), tailwindcss(), themeChunksPlugin(), seoPlugin(siteUrl)],
+    // Ordem: chunks completa o script inline, SEO copia o index.html por idioma e
+    // headers calcula a CSP a partir do HTML final.
+    plugins: [react(), tailwindcss(), themeChunksPlugin(), seoPlugin(siteUrl), headersPlugin()],
     test: {
       environment: 'jsdom',
       setupFiles: ['./src/tests/setup.ts'],
