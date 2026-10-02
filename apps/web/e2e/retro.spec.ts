@@ -1,21 +1,17 @@
 import { expect, test, type Page } from '@playwright/test';
 
-async function switchToRetro(page: Page, isMobile: boolean) {
-  if (isMobile) {
-    await page.getByRole('combobox', { name: 'Temas' }).selectOption('retro');
-  } else {
-    await page.getByRole('button', { name: 'Retrô' }).click();
-  }
+async function switchToRetro(page: Page) {
+  await page.getByRole('button', { name: 'Retrô' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'retro');
 }
 
-test('trocar para o Retrô aplica o visual anos 90 sem recarregar', async ({ page, isMobile }) => {
+test('trocar para o Retrô aplica o visual anos 90 sem recarregar', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => {
     Object.assign(window, { sameDocument: true });
   });
 
-  await switchToRetro(page, isMobile);
+  await switchToRetro(page);
 
   const html = page.locator('html');
   await expect(html).toHaveCSS('background-color', 'rgb(0, 160, 160)');

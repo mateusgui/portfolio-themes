@@ -1,6 +1,6 @@
-import type { ThemeDefinition, ThemeId, ThemeSlots } from './registry.ts';
+import type { ThemeId, ThemeModule, ThemeSlots } from './registry.ts';
 
-const slotsOf = ({ slots }: ThemeDefinition): ThemeSlots => slots ?? {};
+const slotsOf = ({ slots }: ThemeModule): ThemeSlots => slots ?? {};
 
 // Um chunk por tema: só o tema ativo é baixado antes do primeiro render.
 const LOADERS: Record<ThemeId, () => Promise<ThemeSlots>> = {

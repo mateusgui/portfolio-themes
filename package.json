@@ -19,6 +19,7 @@
     "test:e2e": "npm run test:e2e -w web",
     "resume": "npm run resume -w web",
     "og": "npm run og -w web",
+    "avatars": "npm run avatars -w web --",
     "screenshots": "npm run screenshots -w web",
     "format": "prettier --write apps .github \"*.{md,json,jsonc}\" .prettierrc.json",
     "format:check": "prettier --check apps .github \"*.{md,json,jsonc}\" .prettierrc.json",

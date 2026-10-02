@@ -71,6 +71,7 @@ export function AppShell() {
         onOpenMenu={() => {
           setMenuOpen(true);
         }}
+        onNavigate={navigateTo}
       />
       {Decoration && <Decoration />}
       <Sidebar activeId={activeId} onNavigate={navigateTo} />

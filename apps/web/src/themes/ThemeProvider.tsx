@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { readAppliedTheme } from './appliedTheme.ts';
+import { preloadAvatars } from './avatars.ts';
 import { getLoadedSlots, loadThemeSlots } from './loadThemeSlots.ts';
 import { THEME_IDS, THEME_STORAGE_KEY, type ThemeId } from './registry.ts';
 import { ThemeContext } from './useTheme.ts';
@@ -41,10 +42,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     else void loadThemeSlots(next).then(apply);
   }, []);
 
-  // Com a página pronta, baixa os outros temas quando o navegador estiver ocioso.
+  // Com a página pronta, baixa os outros temas (slots e foto do Hero) quando o
+  // navegador estiver ocioso; a foto do tema ativo já veio com prioridade.
   useEffect(() => {
     const preload = () => {
       for (const id of THEME_IDS) void loadThemeSlots(id);
+      preloadAvatars(THEME_IDS.filter((id) => id !== requestedRef.current));
     };
     if ('requestIdleCallback' in window) {
       const handle = window.requestIdleCallback(preload, { timeout: 3000 });

@@ -2,25 +2,18 @@ import { expect, test, type Page } from '@playwright/test';
 
 const NAME = 'Mateus Guimarães Moraes Vilela';
 
-async function switchToHacker(page: Page, isMobile: boolean) {
-  if (isMobile) {
-    await page.getByRole('combobox', { name: 'Temas' }).selectOption('hacker');
-  } else {
-    await page.getByRole('button', { name: 'Hacker' }).click();
-  }
+async function switchToHacker(page: Page) {
+  await page.getByRole('button', { name: 'Hacker' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'hacker');
 }
 
-test('trocar para o Hacker aplica o visual de terminal sem recarregar', async ({
-  page,
-  isMobile,
-}) => {
+test('trocar para o Hacker aplica o visual de terminal sem recarregar', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => {
     Object.assign(window, { sameDocument: true });
   });
 
-  await switchToHacker(page, isMobile);
+  await switchToHacker(page);
 
   const body = page.locator('body');
   await expect(page.locator('html')).toHaveCSS('background-color', 'rgb(0, 0, 0)');

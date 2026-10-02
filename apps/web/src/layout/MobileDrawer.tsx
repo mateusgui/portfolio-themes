@@ -89,12 +89,12 @@ export function MobileDrawer({ id, open, onClose, activeId, onNavigate }: Mobile
       aria-label={t('drawer.label')}
       className="fixed inset-y-0 left-0 m-0 h-dvh max-h-none w-72 max-w-[85vw] bg-surface p-0 text-fg backdrop:bg-fg/50 motion-safe:transition-transform motion-safe:duration-200 lg:hidden starting:open:-translate-x-full"
     >
-      <div data-sidebar-scroll className="relative h-full overflow-y-auto">
+      <div data-sidebar-scroll className="flex h-full flex-col overflow-y-auto">
         <button
           type="button"
           onClick={close}
           aria-label={t('drawer.close')}
-          className="absolute top-3 right-3 rounded-theme p-2 hover:bg-surface-alt"
+          className="mt-3 mr-3 shrink-0 self-end rounded-theme p-2 hover:bg-surface-alt"
         >
           <XIcon aria-hidden="true" className="size-5" />
         </button>

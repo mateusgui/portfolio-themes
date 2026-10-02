@@ -12,11 +12,18 @@ function renderSidebar(onNavigate = vi.fn()) {
 }
 
 describe('Sidebar', () => {
-  it('mostra nome e cargo', () => {
+  it('começa direto na navegação: sem iniciais, nome, cargo ou foto', () => {
     renderSidebar();
 
-    expect(screen.getByText('Mateus Guimarães Moraes Vilela')).toBeInTheDocument();
-    expect(screen.getByText('Desenvolvedor Full Stack')).toBeInTheDocument();
+    const sidebar = screen.getByRole('complementary');
+
+    expect(within(sidebar).queryByText('MG')).not.toBeInTheDocument();
+    expect(within(sidebar).queryByText(/Mateus/)).not.toBeInTheDocument();
+    expect(within(sidebar).queryByText('Desenvolvedor Full Stack')).not.toBeInTheDocument();
+    expect(within(sidebar).queryByRole('img')).not.toBeInTheDocument();
+    expect(sidebar.firstElementChild?.firstElementChild).toBe(
+      screen.getByRole('navigation', { name: 'Seções' }),
+    );
   });
 
   it('lista as 7 seções na ordem, com âncoras estáveis e ícones', () => {

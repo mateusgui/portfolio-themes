@@ -1,24 +1,17 @@
 import { expect, test, type Page } from '@playwright/test';
 
-async function switchToVscode(page: Page, isMobile: boolean) {
-  if (isMobile) {
-    await page.getByRole('combobox', { name: 'Temas' }).selectOption('vscode');
-  } else {
-    await page.getByRole('button', { name: 'VS Code' }).click();
-  }
+async function switchToVscode(page: Page) {
+  await page.getByRole('button', { name: 'VS Code' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'vscode');
 }
 
-test('trocar para o VS Code aplica o visual de editor sem recarregar', async ({
-  page,
-  isMobile,
-}) => {
+test('trocar para o VS Code aplica o visual de editor sem recarregar', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => {
     Object.assign(window, { sameDocument: true });
   });
 
-  await switchToVscode(page, isMobile);
+  await switchToVscode(page);
 
   await expect(page.locator('html')).toHaveCSS('background-color', 'rgb(30, 30, 30)');
   await expect(page.locator('body')).toHaveCSS('font-family', /JetBrains Mono/);

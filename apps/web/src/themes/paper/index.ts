@@ -1,9 +1,9 @@
-import type { ThemeDefinition } from '../registry.ts';
+import type { ThemeModule } from '../registry.ts';
 import { PaperDoodles } from './PaperDoodles.tsx';
 import { PaperSectionHeader } from './PaperSectionHeader.tsx';
 import { PaperSidebarItem } from './PaperSidebarItem.tsx';
 
-export const paperTheme: ThemeDefinition = {
+export const paperTheme: ThemeModule = {
   id: 'paper',
   labelKey: 'themes.paper',
   slots: {

@@ -36,7 +36,6 @@ describe('ThemeSwitcher', () => {
     renderWithProviders(<ThemeSwitcher />);
 
     expect(pressed()).toEqual(['Papel']);
-    expect(screen.getByRole('combobox', { name: 'Temas' })).toHaveValue('paper');
   });
 
   it('com data-theme inválido, usa o Minimalista', () => {
@@ -58,13 +57,40 @@ describe('ThemeSwitcher', () => {
     expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('hacker');
   });
 
-  it('o seletor compacto (mobile) também troca o tema', async () => {
+  it('cada botão tem um ícone decorativo e o nome do tema em aria-label e title', () => {
     renderWithProviders(<ThemeSwitcher />);
 
-    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Temas' }), 'vscode');
+    const icons = buttons().map((button) => {
+      const svg = button.querySelector('svg');
+      expect(svg).toHaveAttribute('aria-hidden', 'true');
+      // Em telas estreitas só o ícone aparece: o nome precisa estar nos atributos.
+      expect(button).toHaveAttribute('aria-label', button.textContent);
+      expect(button).toHaveAttribute('title', button.textContent);
+      return svg?.getAttribute('class')?.match(/lucide-[a-z-]+/)?.[0];
+    });
+
+    expect(icons).toEqual([
+      'lucide-terminal',
+      'lucide-joystick',
+      'lucide-circle',
+      'lucide-braces',
+      'lucide-notebook-pen',
+    ]);
+  });
+
+  it('não há mais seletor compacto: os mesmos botões valem para o mobile', async () => {
+    renderWithProviders(<ThemeSwitcher />);
+
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'VS Code' }));
 
     expect(document.documentElement.dataset.theme).toBe('vscode');
     expect(pressed()).toEqual(['VS Code']);
+    // No VS Code o botão é desenhado pelo slot do tema, que mantém o ícone.
+    expect(
+      screen.getByRole('button', { name: 'Papel' }).querySelector('svg.lucide-notebook-pen'),
+    ).not.toBeNull();
   });
 
   it('acompanha o idioma', async () => {

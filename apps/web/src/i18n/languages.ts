@@ -1,8 +1,11 @@
-/** Idiomas do site, cada um com o nome no próprio idioma (como aparece no seletor). */
+/**
+ * Idiomas do site, cada um com o nome no próprio idioma (como aparece no seletor)
+ * e o código curto usado no seletor em telas estreitas.
+ */
 export const LANGUAGES = [
-  { code: 'pt-BR', name: 'Português' },
-  { code: 'en', name: 'English' },
-  { code: 'es', name: 'Español' },
+  { code: 'pt-BR', name: 'Português', short: 'PT' },
+  { code: 'en', name: 'English', short: 'EN' },
+  { code: 'es', name: 'Español', short: 'ES' },
 ] as const;
 
 export type Language = (typeof LANGUAGES)[number]['code'];

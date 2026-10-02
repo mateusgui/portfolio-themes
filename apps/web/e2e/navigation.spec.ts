@@ -198,7 +198,8 @@ test.describe('desktop', () => {
   });
 
   test('a sidebar rola até o item ativo quando ele está fora da área visível', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 420 });
+    // Baixa o bastante para o último item não caber (a sidebar começa direto na navegação).
+    await page.setViewportSize({ width: 1280, height: 320 });
     await open(page, '/');
     const sidebar = page.getByRole('complementary');
     const contato = sidebar.getByRole('link', { name: 'Contato' });

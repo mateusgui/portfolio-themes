@@ -19,7 +19,7 @@ async function recordThemes(page: Page) {
 const html = (page: Page) => page.locator('html');
 
 test.describe('desktop', () => {
-  test.skip(({ isMobile }) => isMobile, 'botões de tema só no desktop');
+  test.skip(({ isMobile }) => isMobile, 'sidebar fixa só no desktop');
 
   test('CA-01: do Hacker para o Papel, sem recarregar e na mesma seção', async ({ page }) => {
     await page.goto('/?tema=hacker#projetos');
@@ -112,14 +112,11 @@ test.describe('query string', () => {
     expect(new URL(page.url()).search).toBe('');
   });
 
-  test('a escolha manual depois do link vence o link', async ({ page, isMobile }) => {
+  test('a escolha manual depois do link vence o link', async ({ page }) => {
     await page.goto('/?tema=hacker');
 
-    if (isMobile) {
-      await page.getByRole('combobox', { name: 'Temas' }).selectOption('retro');
-    } else {
-      await page.getByRole('button', { name: 'Retrô' }).click();
-    }
+    await page.getByRole('button', { name: 'Retrô' }).click();
+    await expect(html(page)).toHaveAttribute('data-theme', 'retro');
     await page.reload();
 
     await expect(html(page)).toHaveAttribute('data-theme', 'retro');
@@ -127,14 +124,23 @@ test.describe('query string', () => {
 });
 
 test.describe('mobile', () => {
-  test.skip(({ isMobile }) => !isMobile, 'seletor compacto só no mobile');
+  test.skip(({ isMobile }) => !isMobile, 'botões só com ícone no mobile');
 
-  test('o seletor compacto troca o tema', async ({ page }) => {
+  test('os botões de tema mostram só o ícone e trocam o tema', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('group', { name: 'Temas' })).toBeHidden();
+    const group = page.getByRole('group', { name: 'Temas' });
+    const vscode = group.getByRole('button', { name: 'VS Code' });
 
-    await page.getByRole('combobox', { name: 'Temas' }).selectOption('vscode');
+    await expect(group.getByRole('button')).toHaveCount(5);
+    await expect(page.getByRole('combobox', { name: 'Temas' })).toHaveCount(0);
+    // O nome fica só no nome acessível e na dica; na tela, o ícone.
+    await expect(vscode.getByText('VS Code')).toBeHidden();
+    await expect(vscode.locator('svg')).toBeVisible();
+    await expect(vscode).toHaveAttribute('title', 'VS Code');
+
+    await vscode.click();
 
     await expect(html(page)).toHaveAttribute('data-theme', 'vscode');
+    await expect(vscode).toHaveAttribute('aria-pressed', 'true');
   });
 });

@@ -48,8 +48,8 @@ html[data-theme='paper'] {
   line-height: 1.15;
 }
 
-/* Nome na sidebar: Caveat fica ilegível em tamanho pequeno. */
-[data-theme='paper'] :is(aside, dialog) p.font-heading {
+/* Nome na navbar: Caveat fica ilegível em tamanho pequeno. */
+[data-theme='paper'] [data-brand-name] {
   font-size: 1.375rem;
 }
 

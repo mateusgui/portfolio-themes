@@ -4,8 +4,9 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { AppShell } from '../app/AppShell.tsx';
 import { availability } from '../content/profile.ts';
-import i18n from '../i18n/index.ts';
+import i18n, { resources } from '../i18n/index.ts';
 import { renderWithProviders } from '../tests/render.tsx';
+import { THEME_IDS } from '../themes/registry.ts';
 
 function region(name: string) {
   return screen.getByRole('region', { name });
@@ -49,6 +50,87 @@ describe('Hero', () => {
     expect(
       within(screen.getByRole('complementary')).getByRole('link', { name: 'Contato' }),
     ).toHaveAttribute('aria-current', 'location');
+  });
+});
+
+describe('foto do Hero', () => {
+  const ALTS = {
+    hacker: /^Retrato de Mateus em estilo hacker/,
+    retro: /^Retrato de Mateus em pixel art retrô/,
+    minimal: /^Foto de Mateus/,
+    vscode: /editor de código/,
+    paper: /folha de caderno/,
+  };
+
+  it.each(THEME_IDS)('no tema %s, mostra a imagem do próprio tema no Hero', (theme) => {
+    document.documentElement.dataset.theme = theme;
+    renderWithProviders(<AppShell />);
+
+    const photos = screen.getAllByRole('img', { name: /Mateus/ });
+    const [photo] = photos;
+
+    // Uma foto só, dentro do Hero (nunca na sidebar).
+    expect(photos).toHaveLength(1);
+    expect(region('Mateus Guimarães Moraes Vilela')).toContainElement(photo ?? null);
+    expect(photo).toHaveAccessibleName(ALTS[theme]);
+    expect(photo?.getAttribute('src')).toContain(`avatar-${theme}-480.webp`);
+    expect(photo?.getAttribute('srcset')).toMatch(
+      new RegExp(`avatar-${theme}-480\\.webp 480w, .*avatar-${theme}-960\\.webp 960w$`),
+    );
+    for (const other of THEME_IDS.filter((id) => id !== theme)) {
+      expect(photo?.getAttribute('srcset')).not.toContain(`avatar-${other}-`);
+    }
+  });
+
+  it('reserva o espaço (3:4) e carrega com prioridade, sem lazy', () => {
+    renderWithProviders(<AppShell />);
+    const photo = screen.getByRole('img', { name: /Mateus/ });
+
+    expect(photo).toHaveAttribute('width', '480');
+    expect(photo).toHaveAttribute('height', '640');
+    expect(photo).toHaveAttribute('sizes');
+    expect(photo).toHaveAttribute('fetchpriority', 'high');
+    expect(photo).not.toHaveAttribute('loading');
+  });
+
+  it('trocar de tema troca a foto', async () => {
+    renderWithProviders(<AppShell />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Papel' }));
+
+    expect(screen.getByRole('img', { name: /folha de caderno/ }).getAttribute('src')).toContain(
+      'avatar-paper-480.webp',
+    );
+  });
+
+  it.each([
+    [
+      'pt-BR',
+      'Retrato de Mateus em estilo hacker: capuz preto, tons de verde e código caindo ao fundo',
+    ],
+    [
+      'en',
+      'Portrait of Mateus in hacker style: black hood, green tones and code falling in the background',
+    ],
+    [
+      'es',
+      'Retrato de Mateus en estilo hacker: capucha negra, tonos verdes y código cayendo al fondo',
+    ],
+  ] as const)('em %s, o alt da foto é traduzido', async (language, alt) => {
+    document.documentElement.dataset.theme = 'hacker';
+    renderWithProviders(<AppShell />);
+
+    await act(async () => {
+      await i18n.changeLanguage(language);
+    });
+
+    expect(screen.getByRole('img', { name: alt })).toBeInTheDocument();
+  });
+
+  it.each(['pt-BR', 'en', 'es'] as const)('em %s, cada tema tem um alt diferente', (language) => {
+    const alts = Object.values(resources[language].common.hero.photoAlt);
+
+    expect(new Set(alts).size).toBe(THEME_IDS.length);
   });
 });
 

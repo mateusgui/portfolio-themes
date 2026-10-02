@@ -18,9 +18,11 @@ O próprio site é a demonstração técnica: design system baseado em tokens, t
 
 - **Hacker:** terminal verde sobre preto, comandos na sidebar, nome digitado letra a letra e chuva de caracteres (desligável).
 - **Retrô:** web dos anos 90, com janelas em relevo, letreiro, selo "em construção" e um contador de visitas falso.
-- **Minimalista:** foco no conteúdo, um único acento e muito espaço.
+- **Minimalista:** foco no conteúdo, um único acento e muito espaço. É o único tema com a foto original.
 - **VS Code:** a sidebar vira Explorer (`sobre.md`, `projetos.ts`...), cada seção é um arquivo com números de linha, e há abas e status bar.
 - **Papel:** caderno com textura, títulos manuscritos, marca-texto e post-its.
+
+Cada tema tem o seu retrato no Hero (a foto original no Minimalista e uma ilustração no estilo de cada um dos outros) e o seu ícone no seletor da navbar.
 
 Todo tema respeita `prefers-reduced-motion`: com movimento reduzido, nada pisca, digita, gira ou rola suavemente.
 
@@ -54,6 +56,14 @@ npm run og            # imagens de compartilhamento e ícone em apps/web/public/
 npm run screenshots   # prints dos temas para este README, em docs/screenshots/
 ```
 
+As fotos do Hero são convertidas à parte, só quando uma delas muda:
+
+```bash
+npm run avatars -- "C:\caminho\para\as fotos"   # WebP em apps/web/src/assets/avatars/
+```
+
+O script (`apps/web/scripts/generate-avatars.ts`, com `sharp`) lê uma pasta **fora do repositório** com um arquivo por tema (`hacker`, `retro`, `minimalista`, `vscode` e `papel`, em qualquer formato de imagem) e grava `avatar-<tema>-480.webp` e `avatar-<tema>-960.webp`, recortados em 3:4 e sem metadados. Só os WebP são versionados, e o `npm run build` não depende do script.
+
 Variáveis de ambiente: copie `apps/web/.env.example` para `apps/web/.env`. Toda variável `VITE_*` vai para o navegador e é pública, então nunca coloque segredos nelas. `VITE_SITE_URL` é a URL pública do site, usada no build em canonical, Open Graph e sitemap.
 
 ### Com Docker (opcional)
@@ -67,12 +77,13 @@ A imagem serve o build com nginx e serve para ver o site localmente. A Content S
 
 ## Arquitetura
 
-- **Layout único, temas como skins.** Navbar e sidebar são as mesmas em todos os temas. Um tema troca a aparência em dois níveis:
+- **Layout único, temas como skins.** Navbar e sidebar são as mesmas em todos os temas: a navbar tem a identidade à esquerda (iniciais e nome, link para o início), os botões de tema no centro e o idioma à direita; a sidebar tem só a navegação e os links externos. Um tema troca a aparência em dois níveis:
   - **tokens** (`--theme-*`: cores, fontes, raio e sombra em `src/themes/tokens/<tema>.css`), aplicados por `<html data-theme>`;
   - **slots** opcionais (item da sidebar, título de seção, botão de tema, decoração), que renderizam só o conteúdo. Link, foco e `aria-current` ficam sempre no layout.
 - **Tailwind só com classes semânticas.** A paleta padrão foi removida; os componentes usam `bg-surface`, `text-fg`, `font-heading` etc., que apontam para os tokens. Um teste impede cores fixas fora dos arquivos de tema, e outro garante contraste AA em todos os pares de cores de todos os temas.
 - **Sem flash.** Um script inline no `index.html` decide tema e idioma antes da primeira pintura: link, escolha salva ou `prefers-color-scheme` (escuro abre o VS Code). O i18n inicializa de forma síncrona antes do render.
 - **Um chunk por tema.** Os slots de cada tema são baixados sob demanda. O do tema ativo é pedido junto com o JS principal (`modulepreload`) e os outros quando o navegador fica ocioso. Trocar de tema não recarrega a página nem muda a seção.
+- **Uma foto por tema.** O registro de temas (`src/themes/registry.ts`) aponta o ícone e a foto de cada tema, então nenhum componente decide por `if`. Só a foto do tema ativo carrega com prioridade (`fetchpriority="high"`); as outras quatro são pré-carregadas com o navegador ocioso. `srcset`/`sizes`, `width`/`height` e proporção 3:4 evitam salto de layout, e o texto alternativo muda por tema e por idioma.
 - **Conteúdo separado de apresentação.** Dados tipados em `src/content/<idioma>/` e textos de interface em `src/i18n/locales/`. Testes garantem paridade entre os três idiomas, e que nenhum conteúdo proibido (como telefone) aparece no site ou nos PDFs.
 - **Navegação.** Um hook (`useActiveSection`) sincroniza a sidebar com a rolagem: `IntersectionObserver` numa faixa de leitura, topo e fim tratados à parte. Um clique destaca na hora, sem passar pelas seções do caminho, grava o hash sem poluir o histórico e move o foco para o título.
 - **SEO por idioma.** O build gera `/pt/`, `/en/` e `/es/`, cada um com title, description, Open Graph, Twitter card, canonical, hreflang e JSON-LD (`Person`) no próprio idioma, além de `robots.txt` e `sitemap.xml`. A raiz detecta o idioma e é o `x-default`.
@@ -85,6 +96,7 @@ apps/web/
   scripts/      plugins do build (SEO, headers, chunks de tema) e geradores
   src/
     app/        AppShell e providers
+    assets/     fotos do Hero em WebP (uma por tema, em duas larguras)
     content/    conteúdo tipado por idioma
     hooks/      navegação (scroll spy) e movimento reduzido
     i18n/       detecção de idioma, inicialização e traduções

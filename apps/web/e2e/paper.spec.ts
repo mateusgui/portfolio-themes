@@ -1,27 +1,20 @@
 import { expect, test, type Page } from '@playwright/test';
 
-async function switchToPaper(page: Page, isMobile: boolean) {
-  if (isMobile) {
-    await page.getByRole('combobox', { name: 'Temas' }).selectOption('paper');
-  } else {
-    await page.getByRole('button', { name: 'Papel' }).click();
-  }
+async function switchToPaper(page: Page) {
+  await page.getByRole('button', { name: 'Papel' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'paper');
 }
 
 const firstCard = (page: Page) =>
   page.getByRole('region', { name: 'Projetos' }).getByRole('article').first();
 
-test('trocar para o Papel aplica o visual de caderno sem recarregar', async ({
-  page,
-  isMobile,
-}) => {
+test('trocar para o Papel aplica o visual de caderno sem recarregar', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => {
     Object.assign(window, { sameDocument: true });
   });
 
-  await switchToPaper(page, isMobile);
+  await switchToPaper(page);
 
   const html = page.locator('html');
   await expect(html).toHaveCSS('background-color', 'rgb(243, 234, 211)');

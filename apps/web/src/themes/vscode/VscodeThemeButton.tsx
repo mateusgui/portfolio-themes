@@ -2,16 +2,17 @@ import { CheckIcon } from 'lucide-react';
 
 import type { ThemeButtonProps } from '../registry.ts';
 
-/** Item da lista "Color Theme": o tema atual ganha um ✓. */
-export function VscodeThemeButton({ label, pressed }: ThemeButtonProps) {
+/** Item da lista "Color Theme": o tema atual ganha um ✓ (só onde o nome cabe). */
+export function VscodeThemeButton({ label, pressed, icon }: ThemeButtonProps) {
   return (
-    <span className="flex items-center gap-1">
+    <>
       <CheckIcon
         aria-hidden="true"
         data-testid={pressed ? 'theme-check' : undefined}
-        className={`size-3.5 ${pressed ? '' : 'invisible'}`}
+        className={`hidden size-3.5 lg:block ${pressed ? '' : 'invisible'}`}
       />
-      {label}
-    </span>
+      {icon}
+      <span className="hidden lg:inline">{label}</span>
+    </>
   );
 }

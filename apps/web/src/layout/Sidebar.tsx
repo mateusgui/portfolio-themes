@@ -41,7 +41,11 @@ function DefaultSidebarItem({ label, icon }: SidebarItemProps) {
   );
 }
 
-/** Conteúdo da sidebar, compartilhado pela sidebar fixa (desktop) e pelo drawer (mobile). */
+/**
+ * Conteúdo da sidebar (navegação e links externos; a identidade fica na navbar),
+ * compartilhado pela sidebar fixa (desktop) e pelo drawer (mobile). O contêiner é
+ * uma coluna flex, para os links externos ficarem no rodapé.
+ */
 export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
   const { t } = useTranslation();
   const language = useLanguage();
@@ -64,20 +68,7 @@ export function SidebarContent({ activeId, onNavigate }: SidebarContentProps) {
   }, [activeId]);
 
   return (
-    <div className="flex min-h-full flex-col gap-8 p-6">
-      <div className="flex items-center gap-3">
-        <span
-          aria-hidden="true"
-          className="grid size-12 shrink-0 place-items-center rounded-full bg-accent font-heading text-lg text-accent-fg"
-        >
-          {profile.initials}
-        </span>
-        <div>
-          <p className="font-heading leading-tight">{profile.name}</p>
-          <p className="text-sm text-muted">{t('profile.role')}</p>
-        </div>
-      </div>
-
+    <div className="flex grow flex-col gap-8 p-6">
       <nav aria-label={t('sidebar.sectionsNav')} data-nav="sections">
         <ul className="flex flex-col gap-1">
           {SECTIONS.map(({ id, icon: Icon }) => {
@@ -136,7 +127,7 @@ export function Sidebar(props: SidebarContentProps) {
   return (
     <aside
       data-sidebar-scroll
-      className="fixed top-(--navbar-height) bottom-0 left-0 hidden w-(--sidebar-width) overflow-y-auto border-r border-border bg-surface lg:block"
+      className="fixed top-(--navbar-height) bottom-0 left-0 hidden w-(--sidebar-width) flex-col overflow-y-auto border-r border-border bg-surface lg:flex"
     >
       <SidebarContent {...props} />
     </aside>

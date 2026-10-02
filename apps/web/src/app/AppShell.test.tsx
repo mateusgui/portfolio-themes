@@ -63,6 +63,23 @@ describe('AppShell', () => {
     expect(screen.getByRole('heading', { name: 'Projetos' })).toHaveFocus();
   });
 
+  it('o nome fica na navbar e o link leva ao início, focando o título', async () => {
+    renderWithProviders(<AppShell />);
+    const sidebar = screen.getByRole('complementary');
+    await userEvent.click(within(sidebar).getByRole('link', { name: 'Projetos' }));
+
+    await userEvent.click(
+      within(screen.getByRole('banner')).getByRole('link', { name: /^Mateus Guimarães/ }),
+    );
+
+    expect(within(sidebar).getByRole('link', { name: 'Início' })).toHaveAttribute(
+      'aria-current',
+      'location',
+    );
+    expect(screen.getByRole('heading', { level: 1 })).toHaveFocus();
+    expect(within(sidebar).queryByText(/Mateus/)).not.toBeInTheDocument();
+  });
+
   describe('drawer mobile', () => {
     it('abre pelo botão de menu', async () => {
       renderWithProviders(<AppShell />);
@@ -75,6 +92,7 @@ describe('AppShell', () => {
         'true',
       );
       expect(within(drawer).getByRole('navigation', { name: 'Seções' })).toBeInTheDocument();
+      expect(within(drawer).queryByText(/Mateus/)).not.toBeInTheDocument();
     });
 
     it('fecha pelo botão de fechar', async () => {
@@ -113,7 +131,7 @@ describe('AppShell', () => {
       renderWithProviders(<AppShell />);
       const drawer = await openDrawer();
 
-      await userEvent.click(within(drawer).getByText('Desenvolvedor Full Stack'));
+      await userEvent.click(within(drawer).getByRole('navigation', { name: 'Seções' }));
 
       expect(drawer).toHaveAttribute('open');
     });

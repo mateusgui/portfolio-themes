@@ -18,7 +18,7 @@ function builtCsp() {
 
 for (const path of ['/', '/en/']) {
   for (const theme of ['hacker', 'retro', 'minimal', 'vscode', 'paper']) {
-    test(`a CSP não bloqueia nada: ${path}, tema ${theme}`, async ({ page, isMobile }) => {
+    test(`a CSP não bloqueia nada: ${path}, tema ${theme}`, async ({ page }) => {
       const csp = builtCsp();
       expect(csp).toBeTruthy();
       await page.route('**/*', async (route) => {
@@ -51,11 +51,22 @@ for (const path of ['/', '/en/']) {
       await page.goto(`${path}?tema=${theme}`);
       await page.getByRole('main').waitFor();
       // Troca de tema baixa outro chunk; troca de idioma re-renderiza tudo.
-      if (isMobile) {
-        await page.getByRole('combobox', { name: /^(Temas|Themes)$/ }).selectOption('retro');
-      } else {
-        await page.getByRole('group').getByRole('button').first().click();
-      }
+      await page
+        .getByRole('group')
+        .getByRole('button')
+        .nth(theme === 'retro' ? 0 : 1)
+        .click();
+      await expect(page.locator('html')).not.toHaveAttribute('data-theme', theme);
+      // A foto do novo tema também precisa passar pela CSP.
+      await expect
+        .poll(() =>
+          page
+            .getByRole('main')
+            .getByRole('img')
+            .first()
+            .evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0),
+        )
+        .toBe(true);
       await page.locator('header select').last().selectOption('es');
       await expect(page.locator('html')).toHaveAttribute('lang', 'es');
 

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useContent } from '../content/index.ts';
 import { availability, profile } from '../content/profile.ts';
 import { isModifiedClick } from '../layout/isModifiedClick.ts';
+import { HeroPhoto } from './HeroPhoto.tsx';
 import { Section } from './Section.tsx';
 import type { SectionBodyProps } from './sectionBody.ts';
 
@@ -16,6 +17,7 @@ export function Hero({ onNavigate }: SectionBodyProps) {
       id="inicio"
       title={profile.name}
       level={1}
+      media={<HeroPhoto />}
       className="flex min-h-[calc(100svh-var(--navbar-height))] flex-col justify-center"
     >
       <div className="flex flex-col gap-4">

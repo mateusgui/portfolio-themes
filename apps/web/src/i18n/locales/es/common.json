@@ -8,7 +8,8 @@
   "navbar": {
     "openMenu": "Abrir menú",
     "themes": "Temas",
-    "language": "Idioma"
+    "language": "Idioma",
+    "home": "{{name}}, ir al inicio"
   },
   "drawer": {
     "label": "Menú",
@@ -42,7 +43,14 @@
   },
   "hero": {
     "available": "Disponible para nuevas oportunidades",
-    "cta": "Contactar"
+    "cta": "Contactar",
+    "photoAlt": {
+      "hacker": "Retrato de Mateus en estilo hacker: capucha negra, tonos verdes y código cayendo al fondo",
+      "retro": "Retrato de Mateus en pixel art retro: gafas de sol dentro de una ventana de computadora antigua, rodeada de estrellas",
+      "minimal": "Foto de Mateus: barba, suéter oscuro y camisa clara, sobre fondo blanco",
+      "vscode": "Retrato de Mateus en pixel art al estilo de un editor de código: auriculares, sudadera y símbolos de código al fondo",
+      "paper": "Retrato de Mateus dibujado con bolígrafo azul en una hoja de cuaderno, con resaltador amarillo y una nota adhesiva"
+    }
   },
   "projects": {
     "private": "Privado",
