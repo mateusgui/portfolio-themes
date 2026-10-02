@@ -2,6 +2,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import i18n from '../i18n/index.ts';
+import { LANGUAGE_STORAGE_KEY } from '../i18n/languages.ts';
 import { renderWithProviders } from '../tests/render.tsx';
 import { LanguageSelect } from './LanguageSelect.tsx';
 import { ThemeSwitcher } from './ThemeSwitcher.tsx';
@@ -30,6 +31,6 @@ describe('seletores ignoram valores desconhecidos', () => {
     changeToUnknown(screen.getByRole('combobox', { name: 'Idioma' }));
 
     expect(i18n.language).toBe('pt-BR');
-    expect(localStorage.getItem('portfolio:lang')).toBeNull();
+    expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBeNull();
   });
 });

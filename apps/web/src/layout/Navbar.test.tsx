@@ -2,6 +2,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+import { LANGUAGE_STORAGE_KEY } from '../i18n/languages.ts';
 import { renderWithProviders } from '../tests/render.tsx';
 import { Navbar } from './Navbar.tsx';
 
@@ -64,7 +65,7 @@ describe('Navbar', () => {
 
     expect(screen.getByRole('combobox', { name: 'Idioma' })).toHaveValue('es');
     expect(screen.getByRole('button', { name: 'Abrir menú' })).toBeInTheDocument();
-    expect(localStorage.getItem('portfolio:lang')).toBe('es');
+    expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('es');
     expect(document.documentElement.lang).toBe('es');
     expect(document.title).toBe('Mateus Guimarães | Desarrollador Full Stack');
   });

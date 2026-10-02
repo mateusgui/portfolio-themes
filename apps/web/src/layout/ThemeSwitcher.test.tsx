@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import i18n from '../i18n/index.ts';
 import { renderWithProviders } from '../tests/render.tsx';
+import { THEME_STORAGE_KEY } from '../themes/registry.ts';
 import { ThemeSwitcher } from './ThemeSwitcher.tsx';
 
 function buttons() {
@@ -54,7 +55,7 @@ describe('ThemeSwitcher', () => {
 
     expect(pressed()).toEqual(['Hacker']);
     expect(document.documentElement.dataset.theme).toBe('hacker');
-    expect(localStorage.getItem('portfolio:theme')).toBe('hacker');
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('hacker');
   });
 
   it('o seletor compacto (mobile) também troca o tema', async () => {

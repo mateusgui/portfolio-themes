@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { LANGUAGE_STORAGE_KEY } from '../src/i18n/languages.ts';
+
 test('a raiz tem head em pt-BR, hreflang e JSON-LD', async ({ page }) => {
   await page.goto('/');
 
@@ -34,7 +36,9 @@ for (const [path, lang, title, heading] of [
     await expect(page).toHaveTitle(title);
     await expect(page.getByRole('heading', { level: 2, name: heading })).toBeVisible();
     expect(new URL(page.url()).pathname).toBe('/');
-    expect(await page.evaluate(() => localStorage.getItem('portfolio:lang'))).toBe(lang);
+    expect(await page.evaluate((key) => localStorage.getItem(key), LANGUAGE_STORAGE_KEY)).toBe(
+      lang,
+    );
   });
 }
 

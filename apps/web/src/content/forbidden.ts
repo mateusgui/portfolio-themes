@@ -2,7 +2,7 @@
  * O que nunca pode aparecer no site nem nos currículos: a experiência e o projeto
  * excluídos, e qualquer forma de telefone.
  */
-export const FORBIDDEN_PATTERNS: readonly RegExp[] = [
+const FORBIDDEN_PATTERNS: readonly RegExp[] = [
   /s[óo]\s*c[óo]pias/i,
   /hora\s*do\s*lixo/i,
   /\btel:/i,

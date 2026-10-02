@@ -1,12 +1,12 @@
 import type { YearMonth } from '../i18n/format.ts';
 
-export interface SkillGroup {
+interface SkillGroup {
   id: 'frontend' | 'backend' | 'databases' | 'devops' | 'ai';
   title: string;
   items: readonly string[];
 }
 
-export interface ExperienceEntry {
+interface ExperienceEntry {
   id: string;
   role: string;
   company: string;
@@ -18,7 +18,7 @@ export interface ExperienceEntry {
 }
 
 /** Print de projeto: WebP ou AVIF em `public/`, com o tamanho real (evita layout shift). */
-export interface ProjectImage {
+interface ProjectImage {
   src: `/${string}.${'webp' | 'avif'}`;
   alt: string;
   width: number;
@@ -37,7 +37,7 @@ export interface Project {
   images: readonly ProjectImage[];
 }
 
-export interface EducationEntry {
+interface EducationEntry {
   id: string;
   course: string;
   degree?: string;
