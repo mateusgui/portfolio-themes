@@ -160,23 +160,28 @@ describe('Skills', () => {
       'DevOps e práticas',
       'IA e produtividade',
     ]);
-    expect(within(skills).getByText('Python (FastAPI)')).toBeInTheDocument();
+    expect(within(skills).getByText('Python (FastAPI, Flask)')).toBeInTheDocument();
     expect(within(skills).getByText('PostgreSQL')).toBeInTheDocument();
+    expect(within(skills).getByText('SQLAlchemy (ORM)')).toBeInTheDocument();
   });
 });
 
 describe('Projetos', () => {
-  it('mostra os 4 projetos, com selo "Privado" nos 3 privados', () => {
+  const THEME_LABELS = resources['pt-BR'].common.themes;
+
+  it('mostra os 5 projetos, do mais recente ao mais antigo, com selo "Privado" nos 3 privados', () => {
     renderWithProviders(<AppShell />);
     const cards = within(region('Projetos')).getAllByRole('article');
 
     expect(cards.map((card) => within(card).getByRole('heading').textContent)).toEqual([
+      'Registro de Incidentes NOC',
       'Projeto INDEX',
       'Protocol Tracker',
       'CRM para Gestão de Lavanderia',
       'Este portfólio',
     ]);
     expect(cards.map((card) => within(card).queryByText('Privado') !== null)).toEqual([
+      false,
       true,
       true,
       true,
@@ -184,22 +189,66 @@ describe('Projetos', () => {
     ]);
   });
 
-  it('só o portfólio tem link, e só para o código', () => {
+  it('só os projetos públicos têm link, e só para o código', () => {
     renderWithProviders(<AppShell />);
     const links = within(region('Projetos')).getAllByRole('link');
 
-    expect(links).toHaveLength(1);
-    expect(links[0]).toHaveAttribute('href', 'https://github.com/mateusgui/portfolio-themes');
-    expect(links[0]).toHaveAccessibleName('Ver código: Este portfólio (abre em nova aba)');
-    expect(links[0]).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+      'https://github.com/mateusgui/flask',
+      'https://github.com/mateusgui/portfolio-themes',
+    ]);
+    expect(links[0]).toHaveAccessibleName(
+      'Ver código: Registro de Incidentes NOC (abre em nova aba)',
+    );
+    expect(links[1]).toHaveAccessibleName('Ver código: Este portfólio (abre em nova aba)');
+    for (const link of links) expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
-  it('mostra stack e área de prints em cada card', () => {
+  it('mostra stack e print em cada card', () => {
     renderWithProviders(<AppShell />);
     const index = screen.getByRole('article', { name: 'Projeto INDEX' });
 
     expect(within(index).getByRole('list', { name: 'Tecnologias' })).toHaveTextContent('FastAPI');
-    expect(within(index).getByText('Prints em breve')).toBeInTheDocument();
+    const print = within(index).getByRole('img', { name: /Tela de conferência do Projeto INDEX/ });
+    expect(print).toHaveAttribute('src', '/projetos/index.webp');
+    // Tamanho declarado (sem salto de layout) e carregamento preguiçoso (fica abaixo da dobra).
+    expect(print).toHaveAttribute('width', '960');
+    expect(print).toHaveAttribute('height', '511');
+    expect(print).toHaveAttribute('loading', 'lazy');
+  });
+
+  it.each(THEME_IDS)('no tema %s, o card deste portfólio mostra o print do tema', (theme) => {
+    document.documentElement.dataset.theme = theme;
+    renderWithProviders(<AppShell />);
+    const card = screen.getByRole('article', { name: 'Este portfólio' });
+
+    const print = within(card).getByRole('img');
+    expect(print).toHaveAttribute('src', `/projetos/portfolio-${theme}.webp`);
+    expect(print).toHaveAccessibleName(`Captura deste portfólio no tema ${THEME_LABELS[theme]}`);
+  });
+
+  it('trocar de tema troca o print do portfólio', async () => {
+    renderWithProviders(<AppShell />);
+    const card = screen.getByRole('article', { name: 'Este portfólio' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Papel' }));
+
+    expect(within(card).getByRole('img')).toHaveAttribute('src', '/projetos/portfolio-paper.webp');
+  });
+
+  it.each([
+    ['pt-BR', 'Captura deste portfólio no tema Hacker'],
+    ['en', 'Screenshot of this portfolio in the Hacker theme'],
+    ['es', 'Captura de este portafolio con el tema Hacker'],
+  ] as const)('em %s, o alt do print do portfólio é traduzido', async (language, alt) => {
+    document.documentElement.dataset.theme = 'hacker';
+    renderWithProviders(<AppShell />);
+
+    await act(async () => {
+      await i18n.changeLanguage(language);
+    });
+
+    expect(screen.getByRole('img', { name: alt })).toBeInTheDocument();
   });
 });
 

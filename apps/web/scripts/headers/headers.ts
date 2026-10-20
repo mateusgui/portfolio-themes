@@ -67,6 +67,9 @@ export function headersFile(scriptHashes: readonly string[]) {
 /og/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
+/projetos/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
 /favicon.svg
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 

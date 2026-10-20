@@ -53,16 +53,19 @@ Conteúdo gerado (rode de novo quando o conteúdo mudar e versione o resultado):
 ```bash
 npm run resume        # currículos em PDF (pt-BR, en, es) em apps/web/public/resume/
 npm run og            # imagens de compartilhamento e ícone em apps/web/public/
-npm run screenshots   # prints dos temas para este README, em docs/screenshots/
+npm run screenshots   # prints dos temas: docs/screenshots/ e as prévias dos cards
 ```
 
-As fotos do Hero são convertidas à parte, só quando uma delas muda:
+As imagens são convertidas à parte, só quando uma delas muda:
 
 ```bash
-npm run avatars -- "C:\caminho\para\as fotos"   # WebP em apps/web/src/assets/avatars/
+npm run avatars -- "C:\caminho\para\as fotos"   # fotos do Hero, em apps/web/src/assets/avatars/
+npm run prints                                  # prints dos projetos, em apps/web/public/projetos/
 ```
 
-O script (`apps/web/scripts/generate-avatars.ts`, com `sharp`) lê uma pasta **fora do repositório** com um arquivo por tema (`hacker`, `retro`, `minimalista`, `vscode` e `papel`, em qualquer formato de imagem) e grava `avatar-<tema>-480.webp` e `avatar-<tema>-960.webp`, recortados em 3:4 e sem metadados. Só os WebP são versionados, e o `npm run build` não depende do script.
+O de avatares (`apps/web/scripts/generate-avatars.ts`, com `sharp`) lê uma pasta **fora do repositório** com um arquivo por tema (`hacker`, `retro`, `minimalista`, `vscode` e `papel`, em qualquer formato de imagem) e grava `avatar-<tema>-480.webp` e `avatar-<tema>-960.webp`, recortados em 3:4 e sem metadados. O de prints (`generate-prints.ts`) faz o mesmo com os prints dos projetos, de `apps/web/src/assets/projetos/` (pasta ignorada pelo git) para WebP de 960 px. Só os WebP são versionados, e o `npm run build` não depende dos scripts.
+
+O card deste portfólio não tem print fixo: mostra a captura do tema que estiver ativo (`public/projetos/portfolio-<tema>.webp`), gerada pelo `npm run screenshots` junto com os prints deste README.
 
 Variáveis de ambiente: copie `apps/web/.env.example` para `apps/web/.env`. Toda variável `VITE_*` vai para o navegador e é pública, então nunca coloque segredos nelas. `VITE_SITE_URL` é a URL pública do site, usada no build em canonical, Open Graph e sitemap.
 

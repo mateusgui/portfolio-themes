@@ -47,12 +47,16 @@ describe.each(LANGUAGES.map(({ code }) => code))('currículo em %s', (language) 
     expect(findForbidden(doc.documentElement.outerHTML)).toEqual([]);
   });
 
-  it('só o projeto público tem link', () => {
+  it('só os projetos públicos têm link', () => {
     const projectLinks = [...doc.querySelectorAll('section a')].map((link) =>
       link.getAttribute('href'),
     );
 
-    expect(projectLinks).toEqual([profile.repoUrl]);
+    expect(projectLinks).toEqual(
+      CONTENT[language].projects.flatMap(({ visibility, repoUrl }) =>
+        visibility === 'public' && repoUrl ? [repoUrl] : [],
+      ),
+    );
   });
 });
 

@@ -56,7 +56,8 @@
     "private": "Private",
     "stack": "Technologies",
     "code": "View code",
-    "screenshotsSoon": "Screenshots coming soon"
+    "screenshotsSoon": "Screenshots coming soon",
+    "themePreviewAlt": "Screenshot of this portfolio in the {{theme}} theme"
   },
   "contact": {
     "email": "Email",

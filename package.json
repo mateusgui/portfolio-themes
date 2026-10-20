@@ -20,6 +20,7 @@
     "resume": "npm run resume -w web",
     "og": "npm run og -w web",
     "avatars": "npm run avatars -w web --",
+    "prints": "npm run prints -w web",
     "screenshots": "npm run screenshots -w web",
     "format": "prettier --write apps .github \"*.{md,json,jsonc}\" .prettierrc.json",
     "format:check": "prettier --check apps .github \"*.{md,json,jsonc}\" .prettierrc.json",

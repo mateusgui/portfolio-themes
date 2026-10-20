@@ -32,12 +32,12 @@ export const content: Content = {
     {
       id: 'backend',
       title: 'Back-end',
-      items: ['Python (FastAPI)', 'C# / .NET', 'PHP', 'Node.js', 'APIs REST'],
+      items: ['Python (FastAPI, Flask)', 'C# / .NET', 'PHP', 'Node.js', 'APIs REST'],
     },
     {
       id: 'databases',
       title: 'Bases de datos',
-      items: ['PostgreSQL', 'SQL Server', 'MySQL', 'SQLite'],
+      items: ['PostgreSQL', 'SQL Server', 'MySQL', 'SQLite', 'SQLAlchemy (ORM)'],
     },
     {
       id: 'devops',
@@ -58,13 +58,37 @@ export const content: Content = {
 
   projects: [
     {
+      id: 'noc',
+      title: 'Registro de Incidentes NOC',
+      description:
+        'Sistema web para que el NOC de un proveedor de internet registre incidentes de red, con línea de tiempo, barrios afectados e informe de MTTR.',
+      stack: ['Python', 'Flask', 'PostgreSQL', 'SQLAlchemy', 'Jinja2', 'Docker'],
+      visibility: 'public',
+      repoUrl: 'https://github.com/mateusgui/flask',
+      images: [
+        {
+          src: '/projetos/noc.webp',
+          alt: 'Pantalla de equipos del Registro de Incidentes NOC: menú con incidentes, usuarios, barrios e informe de MTTR, y tabla de equipos con tipo, IP, barrio y situación',
+          width: 960,
+          height: 477,
+        },
+      ],
+    },
+    {
       id: 'index',
       title: 'Proyecto INDEX',
       description:
         'Lectura e indexación automatizada de historias clínicas mediante OCR, con extracción por REGEX para clasificar y nombrar archivos PDF.',
       stack: ['Python', 'FastAPI', 'Uvicorn', 'Pydantic v2', 'JWT', 'bcrypt', 'PostgreSQL 16'],
       visibility: 'private',
-      images: [],
+      images: [
+        {
+          src: '/projetos/index.webp',
+          alt: 'Pantalla de verificación del Proyecto INDEX: lista de PDF del lote, campos extraídos por OCR y la evidencia visual de cada campo, con los datos del paciente ocultos',
+          width: 960,
+          height: 511,
+        },
+      ],
     },
     {
       id: 'protocol-tracker',
@@ -73,7 +97,14 @@ export const content: Content = {
         'Control de productividad y métricas de la operación de digitalización, en producción.',
       stack: ['PHP'],
       visibility: 'private',
-      images: [],
+      images: [
+        {
+          src: '/projetos/protocol-tracker.webp',
+          alt: 'Panel de métricas generales de Protocol Tracker: páginas y protocolos digitalizados en el mes y acumulados en el año',
+          width: 960,
+          height: 512,
+        },
+      ],
     },
     {
       id: 'crm',
@@ -81,7 +112,14 @@ export const content: Content = {
       description: 'Sistema full stack con órdenes de servicio, agenda y finanzas.',
       stack: ['TypeScript', 'Next.js', 'React', 'Prisma', 'PostgreSQL', 'Docker'],
       visibility: 'private',
-      images: [],
+      images: [
+        {
+          src: '/projetos/crm.webp',
+          alt: 'Pantalla de órdenes de servicio del CRM: filtros por cliente, número, fecha y estado, y la lista de órdenes con importe y situación de pago',
+          width: 960,
+          height: 512,
+        },
+      ],
     },
     {
       id: 'portfolio',
@@ -92,6 +130,7 @@ export const content: Content = {
       visibility: 'public',
       repoUrl: profile.repoUrl,
       images: [],
+      themePreview: true,
     },
   ],
 

@@ -26,7 +26,7 @@ interface ProjectImage {
 }
 
 export interface Project {
-  id: 'index' | 'protocol-tracker' | 'crm' | 'portfolio';
+  id: 'noc' | 'index' | 'protocol-tracker' | 'crm' | 'portfolio';
   title: string;
   description: string;
   stack: readonly string[];
@@ -35,6 +35,11 @@ export interface Project {
   /** Só em projetos públicos. */
   repoUrl?: string;
   images: readonly ProjectImage[];
+  /**
+   * Este portfólio: em vez de `images`, o card mostra o print do tema atual,
+   * que vem do registro de temas e troca junto com o tema.
+   */
+  themePreview?: boolean;
 }
 
 interface EducationEntry {

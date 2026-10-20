@@ -3,6 +3,7 @@ import type { ComponentType, ReactNode } from 'react';
 
 import type { SectionId } from '../sections/sections.ts';
 import { avatarOf } from './avatars.ts';
+import { previewOf } from './previews.ts';
 
 export const THEME_IDS = ['hacker', 'retro', 'minimal', 'vscode', 'paper'] as const;
 
@@ -45,6 +46,13 @@ export interface ThemeAvatar {
   height: number;
 }
 
+/** Print do site neste tema, usado no card deste portfólio. */
+export interface ThemePreview {
+  src: string;
+  width: number;
+  height: number;
+}
+
 /**
  * Um tema veste o layout comum: os tokens vêm de `tokens/<id>.css` (via
  * `data-theme`) e os slots opcionais trocam a aparência de peças específicas.
@@ -57,6 +65,8 @@ export interface ThemeDefinition {
   icon: ComponentType<{ className?: string }>;
   /** Foto do Hero neste tema. */
   avatar: ThemeAvatar;
+  /** Print do site neste tema (card deste portfólio). */
+  preview: ThemePreview;
   slots?: Partial<{
     SidebarItem: ComponentType<SidebarItemProps>;
     SectionHeader: ComponentType<SectionHeaderProps>;
@@ -67,7 +77,7 @@ export interface ThemeDefinition {
 
 export type ThemeSlots = NonNullable<ThemeDefinition['slots']>;
 
-/** O que o chunk de um tema exporta: os slots (ícone e foto ficam no registro). */
+/** O que o chunk de um tema exporta: os slots (ícone, foto e print ficam no registro). */
 export type ThemeModule = Pick<ThemeDefinition, 'id' | 'labelKey' | 'slots'>;
 
 /**
@@ -88,6 +98,7 @@ export const THEMES: readonly Omit<ThemeDefinition, 'slots'>[] = THEME_IDS.map((
   labelKey: `themes.${id}`,
   icon: ICONS[id],
   avatar: avatarOf(id),
+  preview: previewOf(id),
 }));
 
 /** Definição (sem slots) de um tema registrado. */

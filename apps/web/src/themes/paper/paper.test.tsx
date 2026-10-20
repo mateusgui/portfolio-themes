@@ -86,7 +86,7 @@ describe('tema Papel', () => {
     renderWithProviders(<AppShell />);
     const cards = within(screen.getByRole('region', { name: 'Projetos' })).getAllByRole('article');
 
-    expect(cards).toHaveLength(4);
+    expect(cards).toHaveLength(5);
     for (const card of cards) expect(card).toHaveAttribute('data-card', 'project');
   });
 });

@@ -17,6 +17,7 @@
     "check": "npm run lint && npm run typecheck && npm run test",
     "resume": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/generate-resumes.ts",
     "avatars": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/generate-avatars.ts",
+    "prints": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/generate-prints.ts",
     "og": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/generate-og.ts",
     "screenshots": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/generate-screenshots.ts"
   },

@@ -4,11 +4,36 @@ import { useTranslation } from 'react-i18next';
 import { useContent } from '../content/index.ts';
 import type { Project } from '../content/types.ts';
 import { GitHubIcon } from '../layout/BrandIcons.tsx';
+import { getTheme } from '../themes/registry.ts';
+import { useTheme } from '../themes/useTheme.ts';
 import { Chips } from './Chips.tsx';
 import { Section } from './Section.tsx';
 
+/** Print do card: o do conteúdo ou, neste portfólio, o do tema atual. */
+interface CardImage {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+/**
+ * Prints a mostrar: os do conteúdo ou, quando o projeto é este portfólio
+ * (`themePreview`), a captura do tema atual, vinda do registro de temas.
+ */
+function useProjectImages(project: Project): readonly CardImage[] {
+  const { t } = useTranslation();
+  const { theme } = useTheme();
+
+  if (!project.themePreview) return project.images;
+
+  const { preview, labelKey } = getTheme(theme);
+  return [{ ...preview, alt: t('projects.themePreviewAlt', { theme: t(labelKey) }) }];
+}
+
 function ProjectCard({ project }: { project: Project }) {
   const { t } = useTranslation();
+  const images = useProjectImages(project);
   const titleId = `projeto-${project.id}`;
 
   return (
@@ -29,9 +54,9 @@ function ProjectCard({ project }: { project: Project }) {
         )}
       </div>
 
-      {project.images.length > 0 ? (
+      {images.length > 0 ? (
         <ul className="grid gap-2">
-          {project.images.map((image) => (
+          {images.map((image) => (
             <li key={image.src}>
               <img
                 src={image.src}
